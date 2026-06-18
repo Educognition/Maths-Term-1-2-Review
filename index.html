@@ -1,0 +1,2382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Maths Review - Terms 1 & 2</title>
+  
+  <!-- Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at 50% 50%, #0d111d 0%, #07080e 100%);
+      --panel-bg: rgba(255, 255, 255, 0.025);
+      --panel-border: rgba(255, 255, 255, 0.07);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #475569;
+      
+      --accent-purple: #8b5cf6;
+      --accent-purple-glow: rgba(139, 92, 246, 0.4);
+      --accent-cyan: #06b6d4;
+      --accent-cyan-glow: rgba(6, 182, 212, 0.4);
+      --accent-green: #10b981;
+      --accent-green-glow: rgba(16, 185, 129, 0.4);
+      
+      --shadow-lg: 0 20px 50px -15px rgba(0, 0, 0, 0.7);
+      --transition-smooth: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --transition-fast: all 0.15s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Fullscreen Confetti Canvas */
+    #confetti-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 90;
+    }
+
+    /* Dashboard (Week Selector Grid) View */
+    .dashboard-view {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+      padding: 6vh 6vw;
+      overflow-y: auto;
+      z-index: 10;
+      position: absolute;
+      top: 0;
+      left: 0;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    }
+
+    .dashboard-view::-webkit-scrollbar {
+      width: 6px;
+    }
+    .dashboard-view::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 5vh;
+    }
+
+    .dashboard-header h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 4.8vh;
+      font-weight: 800;
+      background: linear-gradient(135deg, #c084fc, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.2vh;
+      letter-spacing: -0.01em;
+    }
+
+    .dashboard-header p {
+      font-size: 2vh;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .weeks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 2.5vh 2vw;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+      padding-bottom: 4vh;
+    }
+
+    .week-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 22px;
+      padding: 3.5vh 2.2vw;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.5vh;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      height: 18vh;
+      min-height: 140px;
+    }
+
+    .week-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.04), transparent 70%);
+      z-index: 0;
+    }
+
+    .week-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      border-color: rgba(139, 92, 246, 0.35);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(139, 92, 246, 0.12);
+    }
+
+    .week-card-number {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5vh;
+      font-weight: 700;
+      color: var(--accent-purple);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .week-card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.3vh;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+      margin-top: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .week-card-questions {
+      font-size: 1.4vh;
+      color: var(--text-secondary);
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Sidebar Drawer Styles */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 99;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -420px;
+      width: 420px;
+      height: 100vh;
+      background: rgba(8, 10, 20, 0.88);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 100;
+      transition: left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 20px 0 50px rgba(0, 0, 0, 0.6);
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .sidebar-header {
+      padding: 4vh 2vw 2vh 2vw;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .sidebar-header h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.8vh;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #a78bfa, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-header p {
+      font-size: 1.5vh;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-top: 0.5vh;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 3.5vh;
+      right: 2vw;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 3.5vh;
+      cursor: pointer;
+      line-height: 1;
+      transition: var(--transition-fast);
+    }
+
+    .close-btn:hover {
+      color: white;
+    }
+
+    .sidebar-menu {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2vh 1.2vw;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2vh;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    }
+
+    .sidebar-menu::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-menu::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+
+    .menu-item {
+      padding: 1.8vh 1.5vw;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4vh;
+      text-align: left;
+    }
+
+    .menu-item:hover {
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.08);
+      transform: translateX(3px);
+    }
+
+    .menu-item.active {
+      background: rgba(139, 92, 246, 0.07);
+      border-color: rgba(139, 92, 246, 0.25);
+      box-shadow: inset 0 0 15px rgba(139, 92, 246, 0.05);
+    }
+
+    .menu-item-week {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3vh;
+      font-weight: 700;
+      color: var(--accent-purple);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .menu-item.active .menu-item-week {
+      color: var(--accent-cyan);
+    }
+
+    .menu-item-title {
+      font-size: 1.7vh;
+      font-weight: 600;
+      color: var(--text-secondary);
+      line-height: 1.25;
+    }
+
+    .menu-item.active .menu-item-title {
+      color: var(--text-primary);
+    }
+
+    /* Main Container layout */
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+      padding: 3vh 4vw;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 5;
+    }
+
+    /* Top Bar Header */
+    .app-header {
+      height: 10vh;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      padding-bottom: 2vh;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1.5vw;
+    }
+
+    .menu-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--text-primary);
+      width: 6vh;
+      height: 6vh;
+      border-radius: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition-fast);
+    }
+
+    .menu-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: scale(1.05);
+    }
+
+    .back-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--text-secondary);
+      padding: 1.2vh 2.4vh;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.8vh;
+      font-size: 1.8vh;
+      font-weight: 600;
+      transition: var(--transition-fast);
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+      color: var(--text-primary);
+      transform: translateX(-3px);
+    }
+
+    .back-btn:active {
+      transform: translateX(1px);
+    }
+
+    .week-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .week-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6vh;
+      font-weight: 700;
+      color: var(--accent-purple);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      line-height: 1.2;
+    }
+
+    .week-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 3.2vh;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .slide-counter {
+      font-size: 2vh;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 1.2vh 2.4vh;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .progress-bar-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 10%;
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+      border-radius: 2px;
+      transition: width 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    /* Main Slide Deck */
+    .slide-deck {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 3vh 0;
+    }
+
+    .slide-card-container {
+      width: 100%;
+      height: 100%;
+      max-width: 1500px;
+      max-height: 72vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .slide-card {
+      width: 100%;
+      height: 100%;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 28px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 4vh 4vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+      
+      /* Card Slide Transitions */
+      transition: transform 0.28s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.28s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transform: scale(1) translateX(0);
+      opacity: 1;
+    }
+
+    /* Slide transition classes */
+    .slide-exit-next {
+      transform: translateX(-80px) scale(0.97);
+      opacity: 0;
+    }
+    .slide-exit-prev {
+      transform: translateX(80px) scale(0.97);
+      opacity: 0;
+    }
+    .slide-enter-next {
+      transform: translateX(80px) scale(0.97);
+      opacity: 0;
+    }
+    .slide-enter-prev {
+      transform: translateX(-80px) scale(0.97);
+      opacity: 0;
+    }
+
+    /* Slide Card Sections */
+    .question-box {
+      height: 23vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      overflow: hidden;
+      padding: 0 1vw;
+    }
+
+    #question-text {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.4;
+      width: 100%;
+    }
+
+    .card-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+      margin: 1.5vh 0;
+    }
+
+    .reveal-section {
+      height: 33vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      width: 100%;
+    }
+
+    /* Large Glowing Reveal Button */
+    .reveal-btn {
+      background: linear-gradient(135deg, #5b21b6, #7c3aed);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      color: white;
+      padding: 3.5vh 6vw;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 15px 35px -5px rgba(124, 58, 237, 0.5), 0 0 30px rgba(124, 58, 237, 0.15);
+      transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8vh;
+    }
+
+    .reveal-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 45px -5px rgba(124, 58, 237, 0.6), 0 0 40px rgba(124, 58, 237, 0.3);
+    }
+
+    .reveal-btn:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .reveal-btn-glow {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+      transition: left 0.8s ease;
+    }
+
+    .reveal-btn:hover .reveal-btn-glow {
+      left: 100%;
+    }
+
+    .reveal-btn-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 3.4vh;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    .reveal-btn-hint {
+      font-size: 1.5vh;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* Answer Details Card layout */
+    .answer-details {
+      width: 100%;
+      height: 100%;
+      display: none; /* Controlled by Javascript */
+      flex-direction: column;
+      gap: 1.5vh;
+      justify-content: center;
+    }
+
+    .answer-details.visible {
+      display: flex;
+      animation: slideUpReveal 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    }
+
+    @keyframes slideUpReveal {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .answer-card, .process-card {
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 18px;
+      padding: 1.5vh 2.5vw;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: var(--transition-smooth);
+    }
+
+    .answer-card {
+      flex: 1.2;
+      border-left: 6px solid var(--accent-green);
+      box-shadow: inset 6px 0 24px -6px rgba(16, 185, 129, 0.12);
+    }
+
+    .process-card {
+      flex: 0.8;
+      border-left: 4px solid var(--accent-cyan);
+      box-shadow: inset 4px 0 20px -6px rgba(6, 182, 212, 0.08);
+      background: rgba(255, 255, 255, 0.008);
+    }
+
+    .card-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4vh;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: 0.12em;
+      margin-bottom: 0.3vh;
+      text-transform: uppercase;
+    }
+
+    .card-content {
+      font-weight: 600;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Pop-out Huge Answer style */
+    .answer-content {
+      color: var(--accent-green);
+      font-weight: 850;
+      font-family: 'Outfit', sans-serif;
+      text-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+      transform: scale(1);
+      opacity: 0;
+      animation: popOutAnswer 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.2) forwards;
+      animation-delay: 0.08s;
+    }
+
+    @keyframes popOutAnswer {
+      0% {
+        transform: scale(0.85);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .process-content {
+      color: #cbd5e1;
+      font-family: 'Fira Code', monospace;
+      font-weight: 400;
+      line-height: 1.25;
+    }
+
+    /* Math Expressions Styles */
+    .math-var {
+      font-family: 'Outfit', sans-serif;
+      font-style: italic;
+      font-weight: 600;
+      color: #a5b4fc;
+      text-shadow: 0 0 10px rgba(165, 180, 252, 0.25);
+    }
+
+    .fraction {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      font-size: 0.88em;
+      padding: 0 0.15em;
+      line-height: 1;
+      font-weight: 500;
+      font-family: 'Fira Code', monospace;
+    }
+    .fraction .num {
+      border-bottom: 1.5px solid currentColor;
+      padding-bottom: 0.05em;
+      min-width: 0.8em;
+    }
+    .fraction .den {
+      padding-top: 0.05em;
+      min-width: 0.8em;
+    }
+
+    /* Bottom Controls Area */
+    .app-footer {
+      height: 10vh;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      padding-top: 1vh;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      color: var(--text-primary);
+      padding: 1.6vh 3.5vh;
+      font-size: 1.8vh;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 1vh;
+      transition: var(--transition-fast);
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .nav-btn:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+    }
+
+    .prev-btn {
+      color: var(--text-secondary);
+    }
+
+    .next-btn {
+      background: rgba(139, 92, 246, 0.08);
+      border-color: rgba(139, 92, 246, 0.25);
+      color: #d8b4fe;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.03);
+    }
+
+    .next-btn:hover:not(:disabled) {
+      background: rgba(139, 92, 246, 0.18);
+      border-color: rgba(139, 92, 246, 0.4);
+      color: white;
+      box-shadow: 0 0 25px rgba(139, 92, 246, 0.12);
+    }
+
+    /* Progress Navigation Dots */
+    .nav-dots {
+      display: flex;
+      gap: 1.5vw;
+      align-items: center;
+    }
+
+    .dot {
+      width: 1.8vh;
+      height: 1.8vh;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      position: relative;
+    }
+
+    .dot:hover {
+      transform: scale(1.3);
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .dot.active {
+      background: var(--accent-cyan);
+      box-shadow: 0 0 15px var(--accent-cyan);
+      border-color: var(--text-primary);
+      transform: scale(1.25);
+    }
+
+    .dot.completed {
+      background: var(--accent-purple);
+      box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+    }
+
+    .dot::after {
+      content: attr(data-q);
+      position: absolute;
+      bottom: 2.8vh;
+      left: 50%;
+      transform: translateX(-50%) translateY(5px);
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 0.4vh 0.8vh;
+      border-radius: 5px;
+      font-size: 1.2vh;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition-fast);
+      white-space: nowrap;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .dot:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Keyboard Hints Panel */
+    .keyboard-hints {
+      display: flex;
+      gap: 1.5vw;
+      font-size: 1.3vh;
+      color: var(--text-muted);
+    }
+
+    .hint-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5vw;
+    }
+
+    kbd {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 0.2vh 0.6vh;
+      font-family: inherit;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    /* Celebration Screen */
+    .celebration-card {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 3.5vh;
+      animation: scaleUpCelebration 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    }
+
+    @keyframes scaleUpCelebration {
+      from {
+        opacity: 0;
+        transform: scale(0.94);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .trophy-icon {
+      font-size: 11vh;
+      filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.4));
+      animation: bounceTrophy 2.4s infinite ease-in-out;
+      line-height: 1;
+    }
+
+    @keyframes bounceTrophy {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-12px) rotate(3deg);
+      }
+    }
+
+    .celebration-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 5.5vh;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10b981, #06b6d4, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 40px rgba(6, 182, 212, 0.15);
+      line-height: 1.1;
+    }
+
+    .celebration-subtitle {
+      font-size: 2.4vh;
+      color: var(--text-secondary);
+      max-width: 650px;
+      line-height: 1.4;
+    }
+
+    .celebration-buttons {
+      display: flex;
+      gap: 1.5vw;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 14px;
+      padding: 2vh 4vw;
+      font-size: 2vh;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: 1vh;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      box-shadow: 0 10px 20px rgba(16, 185, 129, 0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 25px rgba(16, 185, 129, 0.35);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fullscreen Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Sidebar Drawer Overlay -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar(false)"></div>
+  
+  <!-- Sidebar Drawer -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Maths Review</h2>
+      <p>Term 1 & 2 • Weeks 1 to 11</p>
+      <button class="close-btn" onclick="toggleSidebar(false)">&times;</button>
+    </div>
+    <div class="sidebar-menu" id="sidebar-menu">
+      <!-- Generated dynamically in Javascript -->
+    </div>
+  </div>
+
+  <!-- Screen 1: Dashboard View -->
+  <div class="dashboard-view" id="dashboard-view">
+    <header class="dashboard-header">
+      <h1>Terms 1 & 2 Mathematics Review</h1>
+      <p>Digital Flashcards for Classroom Display • Select a week below</p>
+    </header>
+    <main class="weeks-grid" id="weeks-grid">
+      <!-- Populated dynamically via JS -->
+    </main>
+  </div>
+
+  <!-- Screen 2: Primary Flashcard Deck Container (Hidden by default) -->
+  <div class="app-container" id="deck-view" style="display: none;">
+    
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <button class="back-btn" onclick="showDashboard()">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>WEEKS</span>
+        </button>
+        <button class="menu-btn" onclick="toggleSidebar(true)" aria-label="Open menu" style="display: none;">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <div class="week-info">
+          <span class="week-label" id="week-label">WEEK 1</span>
+          <h1 class="week-title" id="week-title">ORDER OF OPERATIONS (GEMA) AND INTEGERS</h1>
+        </div>
+      </div>
+      
+      <div class="header-right">
+        <div class="slide-counter" id="slide-counter">Question 1 of 10</div>
+      </div>
+      
+      <!-- Linear Progress Bar -->
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+    </header>
+    
+    <!-- Main Flashcard Workspace -->
+    <main class="slide-deck">
+      <div class="slide-card-container">
+        <div class="slide-card" id="slide-card">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </main>
+    
+    <!-- Bottom Controls and Indicators -->
+    <footer class="app-footer">
+      <button class="nav-btn prev-btn" id="prev-btn" onclick="prevQuestion()" disabled>
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        <span>PREVIOUS</span>
+      </button>
+      
+      <div class="nav-dots" id="nav-dots">
+        <!-- 10 Question dots created dynamically -->
+      </div>
+      
+      <div class="keyboard-hints">
+        <span class="hint-item"><kbd>Space</kbd> / <kbd>&rarr;</kbd> Reveal/Next</span>
+        <span class="hint-item"><kbd>&larr;</kbd> Previous</span>
+        <span class="hint-item"><kbd>M</kbd> Menu</span>
+      </div>
+      
+      <button class="nav-btn next-btn" id="next-btn" onclick="nextQuestion()">
+        <span id="next-btn-text">REVEAL</span>
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </footer>
+  </div>
+
+  <script>
+    // Parsed Data Array
+    const weeksData = [
+  {
+    "weekNumber": 1,
+    "weekTitle": "ORDER OF OPERATIONS (GEMA) AND INTEGERS",
+    "questions": [
+      {
+        "questionNumber": 1,
+        "questionText": "Evaluate the expression using the correct order of operations: 15 - 3 x 4 + 2",
+        "answerText": "5",
+        "processText": "15 - 12 + 2 = 3 + 2 = 5"
+      },
+      {
+        "questionNumber": 2,
+        "questionText": "Evaluate the expression: 5 x (3 + 2^2) - 8",
+        "answerText": "27",
+        "processText": "5 x (3 + 4) - 8 = 5 x 7 - 8 = 35 - 8 = 27"
+      },
+      {
+        "questionNumber": 3,
+        "questionText": "Arrange the following integers from least to greatest: -9, 4, -2, 0, -6, 3",
+        "answerText": "-9, -6, -2, 0, 3, 4",
+        "processText": ""
+      },
+      {
+        "questionNumber": 4,
+        "questionText": "What is the additive inverse of -18? Write an addition equation to show their sum.",
+        "answerText": "The additive inverse is 18. Equation: -18 + 18 = 0",
+        "processText": ""
+      },
+      {
+        "questionNumber": 5,
+        "questionText": "Compute the sum: -8 + 13",
+        "answerText": "5",
+        "processText": ""
+      },
+      {
+        "questionNumber": 6,
+        "questionText": "Compute the difference: 6 - (-4)",
+        "answerText": "10",
+        "processText": "6 + 4 = 10"
+      },
+      {
+        "questionNumber": 7,
+        "questionText": "Compute: -7 + (-5)",
+        "answerText": "-12",
+        "processText": ""
+      },
+      {
+        "questionNumber": 8,
+        "questionText": "The thermometer reads -5 degrees C at 6:00 AM. By noon, the temperature rises by 12 degrees C. What is the temperature at noon?",
+        "answerText": "7 degrees C",
+        "processText": "-5 + 12 = 7"
+      },
+      {
+        "questionNumber": 9,
+        "questionText": "A bank account is overdrawn with a balance of -$35. If a deposit of $100 is made, what is the new balance?",
+        "answerText": "$65",
+        "processText": "-35 + 100 = 65"
+      },
+      {
+        "questionNumber": 10,
+        "questionText": "Evaluate the expression: (24 / 3) x 2 - 5 x (-3)",
+        "answerText": "31",
+        "processText": "8 x 2 - (-15) = 16 + 15 = 31"
+      }
+    ]
+  },
+  {
+    "weekNumber": 2,
+    "weekTitle": "INTRODUCTION TO ALGEBRA AND NUMBER PROPERTIES",
+    "questions": [
+      {
+        "questionNumber": 1,
+        "questionText": "Write an algebraic expression for the statement: \"5 more than twice a number x.\"",
+        "answerText": "2x + 5",
+        "processText": ""
+      },
+      {
+        "questionNumber": 2,
+        "questionText": "Write an algebraic equation for the statement: \"A number y divided by 3 is equal to 12.\"",
+        "answerText": "y/3 = 12 (or y divided by 3 = 12)",
+        "processText": ""
+      },
+      {
+        "questionNumber": 3,
+        "questionText": "In the expression 8x - 5, identify the variable, the coefficient, and the constant.",
+        "answerText": "Variable: x; Coefficient: 8; Constant: -5",
+        "processText": ""
+      },
+      {
+        "questionNumber": 4,
+        "questionText": "Evaluate the algebraic expression 4m + 7 when m = 6.",
+        "answerText": "31",
+        "processText": "4(6) + 7 = 24 + 7 = 31"
+      },
+      {
+        "questionNumber": 5,
+        "questionText": "Rewrite and simplify this expression using the commutative property of addition: 5 + x + 9",
+        "answerText": "x + 14",
+        "processText": "x + 5 + 9 = x + 14"
+      },
+      {
+        "questionNumber": 6,
+        "questionText": "Expand the expression using the distributive property: 4(3x + 2)",
+        "answerText": "12x + 8",
+        "processText": ""
+      },
+      {
+        "questionNumber": 7,
+        "questionText": "Which mathematical property is explicitly shown by the equation (a + b) + c = a + (b + c)?",
+        "answerText": "The Associative Property of Addition",
+        "processText": ""
+      },
+      {
+        "questionNumber": 8,
+        "questionText": "Does the commutative property apply to division? Provide a short numerical example to justify your answer.",
+        "answerText": "No. For example, 12 / 4 = 3, but 4 / 12 = 1/3. Since 3 does not equal 1/3, the property does not apply.",
+        "processText": ""
+      },
+      {
+        "questionNumber": 9,
+        "questionText": "Write an algebraic expression for the total cost of purchasing n apples if each apple costs $1.50.",
+        "answerText": "1.50n (or 1.5n)",
+        "processText": ""
+      },
+      {
+        "questionNumber": 10,
+        "questionText": "A taxi company charges a flat booking fee of $5 plus $2.50 per kilometer (k) traveled. Write an equation for the total cost (C) of a ride.",
+        "answerText": "C = 2.50k + 5 (or C = 5 + 2.5k)",
+        "processText": ""
+      }
+    ]
+  },
+  {
+    "weekNumber": 3,
+    "weekTitle": "SIMPLIFYING ALGEBRAIC EXPRESSIONS",
+    "questions": [
+      {
+        "questionNumber": 1,
+        "questionText": "Simplify the expression by collecting like terms: 5a + 2a + a",
+        "answerText": "8a",
+        "processText": ""
+      },
+      {
+        "questionNumber": 2,
+        "questionText": "Simplify the expression: 9b - 3b + 4b",
+        "answerText": "10b",
+        "processText": ""
+      },
+      {
+        "questionNumber": 3,
+        "questionText": "Simplify the expression: 6x + 4y + 3x - y",
+        "answerText": "9x + 3y",
+        "processText": "combine 6x + 3x and 4y - y"
+      },
+      {
+        "questionNumber": 4,
+        "questionText": "Simplify the expression: 12 - 5m + 3 - 2m",
+        "answerText": "15 - 7m",
+        "processText": "combine 12 + 3 and -5m - 2m"
+      },
+      {
+        "questionNumber": 5,
+        "questionText": "Simplify the multiplication expression: 4 x 3x",
+        "answerText": "12x",
+        "processText": ""
+      },
+      {
+        "questionNumber": 6,
+        "questionText": "Simplify the expression: 2a x 6b",
+        "answerText": "12ab",
+        "processText": ""
+      },
+      {
+        "questionNumber": 7,
+        "questionText": "Simplify the expression: 7x + 5 - 9x - 8",
+        "answerText": "-2x - 3",
+        "processText": ""
+      },
+      {
+        "questionNumber": 8,
+        "questionText": "Write a simplified algebraic expression for the perimeter of a triangle with side lengths 3x, 4x, and 2x + 1.",
+        "answerText": "9x + 1",
+        "processText": "3x + 4x + 2x + 1 = 9x + 1"
+      },
+      {
+        "questionNumber": 9,
+        "questionText": "True or False: 4a + 5b = 9ab. Explain your reasoning.",
+        "answerText": "False. 4a and 5b are not like terms, so they cannot be combined into a single term. The expression is already fully simplified.",
+        "processText": ""
+      },
+      {
+        "questionNumber": 10,
+        "questionText": "Expand the brackets and then simplify the remaining expression: 3(2x + 4) - 4x",
+        "answerText": "2x + 12",
+        "processText": "6x + 12 - 4x = 2x + 12"
+      }
+    ]
+  },
+  {
+    "weekNumber": 4,
+    "weekTitle": "FRACTIONS, DECIMALS, AND PERCENTAGES (FDP) FOUNDATIONS",
+    "questions": [
+      {
+        "questionNumber": 1,
+        "questionText": "Reduce the fraction 24/36 to its simplest form.",
+        "answerText": "2/3",
+        "processText": "divide the numerator and denominator by their greatest common factor, 12"
+      },
+      {
+        "questionNumber": 2,
+        "questionText": "Convert the improper fraction 17/5 into a mixed number.",
+        "answerText": "3 and 2/5",
+        "processText": ""
+      },
+      {
+        "questionNumber": 3,
+        "questionText": "Convert the mixed number 4 and 2/3 into an improper fraction.",
+        "answerText": "14/3",
+        "processText": "(4 x 3) + 2 = 14"
+      },
+      {
+        "questionNumber": 4,
+        "questionText": "Convert the decimal 0.65 into a fraction simplified to its lowest terms.",
+        "answerText": "13/20",
+        "processText": "65/100 = 13/20"
+      },
+      {
+        "questionNumber": 5,
+        "questionText": "Use division to convert the fraction 5/8 into a terminating decimal.",
+        "answerText": "0.625",
+        "processText": ""
+      },
+      {
+        "questionNumber": 6,
+        "questionText": "Convert 84% into both a decimal and a simplified fraction.",
+        "answerText": "Decimal: 0.84; Fraction: 21/25",
+        "processText": "84/100 = 21/25"
+      },
+      {
+        "questionNumber": 7,
+        "questionText": "Convert the decimal 0.015 into a percentage.",
+        "answerText": "1.5%",
+        "processText": "0.015 x 100"
+      },
+      {
+        "questionNumber": 8,
+        "questionText": "Find the lowest common multiple (LCM) of the denominators to determine which fraction is larger: 3/4 or 5/7",
+        "answerText": "3/4 is larger",
+        "processText": "LCM is 28. 3/4 = 21/28 and 5/7 = 20/28. Since 21 > 20, 3/4 > 5/7"
+      },
+      {
+        "questionNumber": 9,
+        "questionText": "Order the following quantities from smallest to largest: 1/2, 0.45, 55%",
+        "answerText": "0.45, 1/2, 55%",
+        "processText": "converting all to decimals gives 0.45, 0.50, 0.55"
+      },
+      {
+        "questionNumber": 10,
+        "questionText": "If a grid features 100 equal squares and you color in exactly 75 of them, state the shaded area as a simplified fraction, a decimal, and a percentage.",
+        "answerText": "Fraction: 3/4; Decimal: 0.75; Percentage: 75%",
+        "processText": ""
+      }
+    ]
+  },
+  {
+    "weekNumber": 5,
+    "weekTitle": "OPERATIONS WITH FRACTIONS AND FINDING QUANTITIES",
+    "questions": [
+      {
+        "questionNumber": 1,
+        "questionText": "Convert these values into fractions with equal denominators to arrange them from least to greatest: 2/5, 0.35, 50%",
+        "answerText": "0.35, 2/5, 50%",
+        "processText": "written with a common denominator of 20, they are 7/20, 8/20, 10/20"
+      },
+      {
+        "questionNumber": 2,
+        "questionText": "Solve and simplify: 1/3 + 2/5",
+        "answerText": "11/15",
+        "processText": "find a common denominator of 15; 5/15 + 6/15 = 11/15"
+      },
+      {
+        "questionNumber": 3,
+        "questionText": "Solve and simplify: 7/8 - 1/4",
+        "answerText": "5/8",
+        "processText": "7/8 - 2/8 = 5/8"
+      },
+      {
+        "questionNumber": 4,
+        "questionText": "Solve and express your answer as a mixed number: 1 and 1/3 + 5/6",
+        "answerText": "2 and 1/6",
+        "processText": "4/3 + 5/6 = 8/6 + 5/6 = 13/6 = 2 and 1/6"
+      },
+      {
+        "questionNumber": 5,
+        "questionText": "Calculate 3/5 of 45 without using a calculator.",
+        "answerText": "27",
+        "processText": "divide by the denominator first: 45 / 5 = 9; then multiply by the numerator: 9 x 3 = 27"
+      },
+      {
+        "questionNumber": 6,
+        "questionText": "Calculate the value of the top-heavy fraction: 5/4 of 32",
+        "answerText": "40",
+        "processText": "32 / 4 = 8; 8 x 5 = 40"
+      },
+      {
+        "questionNumber": 7,
+        "questionText": "Find 25% of $120.",
+        "answerText": "$30",
+        "processText": "25% = 1/4, so $120 / 4 = $30"
+      },
+      {
+        "questionNumber": 8,
+        "questionText": "Find 70% of 200 meters.",
+        "answerText": "140 meters",
+        "processText": "10% of 200 = 20, so 20 x 7 = 140"
+      },
+      {
+        "questionNumber": 9,
+        "questionText": "A baking recipe requires 2/3 of a cup of sugar. If you triple the recipe, how many cups of sugar will you need in total?",
+        "answerText": "2 cups",
+        "processText": "2/3 x 3 = 6/3 = 2"
+      },
+      {
+        "questionNumber": 10,
+        "questionText": "A physical education class has 30 students. If 20% of the students are left-handed, how many students are right-handed?",
+        "answerText": "24 students",
+        "processText": "20% of 30 = 6 left-handed students. Therefore, 30 - 6 = 24 right-handed students"
+      }
+    ]
+  },
+  {
+    "weekNumber": 6,
+    "weekTitle": "ADVANCED FRACTIONS AND PERCENTAGES",
+    "questions": [
+      {
+        "questionNumber": 1,
+        "questionText": "If 1/4 of a mystery number is 12, what is the whole number?",
+        "answerText": "48",
+        "processText": "12 x 4 = 48"
+      },
+      {
+        "questionNumber": 2,
+        "questionText": "If 2/3 of a bag of marbles equals 16 marbles, how many total marbles are inside the bag?",
+        "answerText": "24 marbles",
+        "processText": "if 2 parts = 16, then 1 part = 8. Total value for 3 parts: 8 x 3 = 24"
+      },
+      {
+        "questionNumber": 3,
+        "questionText": "Find the whole (100%) amount if you know that 40% of it is 28.",
+        "answerText": "70",
+        "processText": "if 40% = 28, then 10% = 7. Thus, 100% = 7 x 10 = 70"
+      },
+      {
+        "questionNumber": 4,
+        "questionText": "You spend $45 on a new jacket, which represents exactly 15% of your original savings account balance. How much money did you have saved initially?",
+        "answerText": "$300",
+        "processText": "$45 / 0.15 = $300"
+      },
+      {
+        "questionNumber": 5,
+        "questionText": "Multiply the whole number by the fraction and write the answer in its simplest form: 6 x 3/5",
+        "answerText": "3 and 3/5 (or 18/5)",
+        "processText": ""
+      },
+      {
+        "questionNumber": 6,
+        "questionText": "Multiply the values and simplify your answer: 10 x 3/4",
+        "answerText": "7 and 1/2 (or 15/2)",
+        "processText": "30/4 = 15/2 = 7 and 1/2"
+      },
+      {
+        "questionNumber": 7,
+        "questionText": "Divide the fraction by the whole number, giving the simplest form: (1/3) / 4",
+        "answerText": "1/12",
+        "processText": "1 / (3 x 4) = 1/12"
+      },
+      {
+        "questionNumber": 8,
+        "questionText": "Divide the fraction by the whole number and simplify: (6/7) / 2",
+        "answerText": "3/7",
+        "processText": "6/14 = 3/7"
+      },
+      {
+        "questionNumber": 9,
+        "questionText": "Divide the whole number by the unit fraction: 5 / (1/3)",
+        "answerText": "15",
+        "processText": "5 x 3 = 15"
+      },
+      {
+        "questionNumber": 10,
+        "questionText": "A juice container holding 4/5 of a liter of juice is split evenly among 4 children. How much juice does each child receive?",
+        "answerText": "1/5 of a liter",
+        "processText": "4/5 / 4 = 1/5"
+      }
+    ]
+  },
+  {
+    "weekNumber": 7,
+    "weekTitle": "INTRODUCTION TO PROBABILITY",
+    "questions": [
+      {
+        "questionNumber": 1,
+        "questionText": "List the descriptions used on a standard probability scale from 0 to 1 and their corresponding values.",
+        "answerText": "0 = Impossible, 0.25 = Unlikely, 0.5 = Even Chance, 0.75 = Likely, 1 = Certain",
+        "processText": ""
+      },
+      {
+        "questionNumber": 2,
+        "questionText": "A standard 6-sided die is rolled. List the complete sample space of all possible outcomes.",
+        "answerText": "1, 2, 3, 4, 5, 6",
+        "processText": ""
+      },
+      {
+        "questionNumber": 3,
+        "questionText": "What is the theoretical probability of rolling an odd number on a standard 6-sided die? Express your answer as a simplified fraction.",
+        "answerText": "1/2",
+        "processText": "the 3 odd numbers are 1, 3, and 5 out of 6 total options, yielding 3/6 = 1/2"
+      },
+      {
+        "questionNumber": 4,
+        "questionText": "A bag contains 5 red marbles, 3 blue marbles, and 4 green marbles. How many total possible outcomes are there when selecting a single marble?",
+        "answerText": "12 outcomes",
+        "processText": "5 + 3 + 4 = 12"
+      },
+      {
+        "questionNumber": 5,
+        "questionText": "Using the marble bag from Problem 4, what is the theoretical probability of selecting a blue marble?",
+        "answerText": "1/4",
+        "processText": "3/12 = 1/4"
+      },
+      {
+        "questionNumber": 6,
+        "questionText": "Using the marble bag from Problem 4, find the probability of randomly choosing a marble that is not red.",
+        "answerText": "7/12",
+        "processText": "there are 3 blue + 4 green = 7 non-red marbles"
+      },
+      {
+        "questionNumber": 7,
+        "questionText": "A coin is flipped 40 times during a classroom experiment. It lands on heads exactly 22 times. What is the experimental probability of landing on heads?",
+        "answerText": "11/20 (or 0.55)",
+        "processText": "22/40 = 11/20"
+      },
+      {
+        "questionNumber": 8,
+        "questionText": "Explain the conceptual difference between theoretical probability and experimental probability.",
+        "answerText": "Theoretical probability is what is mathematically expected to happen based on ideal conditions. Experimental probability is the actual rate an event occurs during real-world trials.",
+        "processText": ""
+      },
+      {
+        "questionNumber": 9,
+        "questionText": "A spinner is divided into 8 equal sections numbered 1 through 8. What is the probability of landing on a value strictly greater than 5?",
+        "answerText": "3/8",
+        "processText": "the valid outcomes are 6, 7, and 8, which is 3 outcomes out of 8"
+      },
+      {
+        "questionNumber": 10,
+        "questionText": "If the calculated probability of a thunderstorm occurring tomorrow is 0.27, what is the probability that it will not storm tomorrow?",
+        "answerText": "0.73",
+        "processText": "1 - 0.27 = 0.73"
+      }
+    ]
+  },
+  {
+    "weekNumber": 8,
+    "weekTitle": "PROBABILITY TOOLS AND APPLICATIONS",
+    "questions": [
+      {
+        "questionNumber": 1,
+        "questionText": "You roll a standard 6-sided die and flip a fair coin at the same time. List all possible combined outcomes as a sample space.",
+        "answerText": "H1, H2, H3, H4, H5, H6, T1, T2, T3, T4, T5, T6 (where H is Heads and T is Tails)",
+        "processText": ""
+      },
+      {
+        "questionNumber": 2,
+        "questionText": "Based on your sample space from Problem 1, how many total combined outcomes exist?",
+        "answerText": "12 combined outcomes",
+        "processText": "2 x 6 = 12"
+      },
+      {
+        "questionNumber": 3,
+        "questionText": "What is the theoretical probability of rolling a number less than 3 and flipping tails?",
+        "answerText": "1/6",
+        "processText": "matching outcomes are T1 and T2, which means 2/12 = 1/6"
+      },
+      {
+        "questionNumber": 4,
+        "questionText": "A game spinner has 4 equal sections: Red, Yellow, Blue, and Green. You spin it 50 times and it lands on Blue 18 times. Calculate the experimental probability of landing on Blue.",
+        "answerText": "9/25 (or 0.36)",
+        "processText": "18/50 = 9/25"
+      },
+      {
+        "questionNumber": 5,
+        "questionText": "The theoretical probability of landing on Blue in Problem 4 is 25% (0.25). Why does your real-world experimental result differ from this math baseline?",
+        "answerText": "Small sample sizes are heavily influenced by short-term random variations and chance, causing experimental results to fluctuate away from theoretical expectations.",
+        "processText": ""
+      },
+      {
+        "questionNumber": 6,
+        "questionText": "If you run the experiment in Problem 4 for 10,000 spins instead of 50, what should happen to the experimental probability of landing on Blue?",
+        "answerText": "According to the Law of Large Numbers, the experimental probability will stabilize and move closer to the true theoretical probability of 0.25 (25%).",
+        "processText": ""
+      },
+      {
+        "questionNumber": 7,
+        "questionText": "Briefly outline the structural steps (Plan, Doing, Calculating) required to investigate whether a coin is fair or biased.",
+        "answerText": "Plan: Decide to flip the coin a large number of times (e.g., 200 times) and record the results. Doing: Conduct the flips physically under consistent conditions. Calculating: Divide total heads by 200 to find the experimental probability and check how close it is to 0.5.",
+        "processText": ""
+      },
+      {
+        "questionNumber": 8,
+        "questionText": "Two fair coins are tossed at the same time. What is the theoretical probability of getting exactly one Head and one Tail?",
+        "answerText": "1/2 (or 0.5)",
+        "processText": "sample space is HH, HT, TH, TT. Two out of four outcomes match, so 2/4 = 1/2"
+      },
+      {
+        "questionNumber": 9,
+        "questionText": "If you roll a standard 6-sided die 180 times, how many times would you expect to roll a 6?",
+        "answerText": "30 times",
+        "processText": "1/6 x 180 = 30"
+      },
+      {
+        "questionNumber": 10,
+        "questionText": "A container holds red and white plastic counters. The probability of randomly pulling out a red counter is 3/8. If there are 24 total counters, how many are red?",
+        "answerText": "9 red counters",
+        "processText": "3/8 x 24 = 9"
+      }
+    ]
+  },
+  {
+    "weekNumber": 9,
+    "weekTitle": "STATISTICS (QUESTIONING, PLANNING, AND COLLECTING)",
+    "questions": [
+      {
+        "questionNumber": 1,
+        "questionText": "Explain the difference between numerical data and categorical data, providing an example of each.",
+        "answerText": "Numerical data represents quantities that can be counted or measured (e.g., a student's height). Categorical data represents qualities, groupings, or descriptors (e.g., a student's favorite color).",
+        "processText": ""
+      },
+      {
+        "questionNumber": 2,
+        "questionText": "What qualifies a dataset as being multivariate? Give a quick example.",
+        "answerText": "A multivariate dataset records two or more distinct variables for each observed individual. For example, tracking both the height and shoe size of a single person simultaneously.",
+        "processText": ""
+      },
+      {
+        "questionNumber": 3,
+        "questionText": "Rewrite this biased survey question to make it objective and neutral: \"Don't you agree that school uniforms are restrictive and should be banned?\"",
+        "answerText": "Neutral rewrite: \"What is your opinion on the school uniform policy?\"",
+        "processText": ""
+      },
+      {
+        "questionNumber": 4,
+        "questionText": "Write a statistical comparison question to investigate the water consumption habits of two different groups of students.",
+        "answerText": "\"Is there a difference between the median daily water consumption (in mL) of Year 7 students compared to Year 12 students?\"",
+        "processText": ""
+      },
+      {
+        "questionNumber": 5,
+        "questionText": "Design a multiple-choice survey question containing at least 4 clear, non-overlapping categories to find out how students travel to school.",
+        "answerText": "\"How do you primarily travel to school? A) Walking, B) Bicycle/Scooter, C) Private Car, D) Public Transport (Bus/Train).\"",
+        "processText": ""
+      },
+      {
+        "questionNumber": 6,
+        "questionText": "You need to measure school bag weights for a project. Write a basic plan detailing who you will measure, what tool you will use, and how you will keep measurements accurate.",
+        "answerText": "Who: 30 randomly selected students from each year level. What: A calibrated digital scale. How: Weigh all subjects using the same scale on a flat surface, ensuring bags are closed and recording values to the nearest 0.1 kg.",
+        "processText": ""
+      },
+      {
+        "questionNumber": 7,
+        "questionText": "Why must statisticians perform data \"cleaning\" steps after collecting primary survey responses?",
+        "answerText": "To detect and correct data entry mistakes, incomplete responses, formatting inconsistencies, or clear layout anomalies that might break calculation tools or skew analysis.",
+        "processText": ""
+      },
+      {
+        "questionNumber": 8,
+        "questionText": "Classify this specific variable type: The exact time it takes a student to run 100 meters.",
+        "answerText": "Numerical Continuous data",
+        "processText": "it is a measurement that can take any fractional value along a continuous scale"
+      },
+      {
+        "questionNumber": 9,
+        "questionText": "Classify this specific variable type: The number of pets living in a student's household.",
+        "answerText": "Numerical Discrete data",
+        "processText": "it represents a distinct count that must be a whole number"
+      },
+      {
+        "questionNumber": 10,
+        "questionText": "While cleaning a dataset of student heights measured in centimeters, you find these entries: 142, 155, 14.8, 161. Identify the error and describe how to fix it.",
+        "answerText": "The entry 14.8 is an error, likely a misplaced decimal point meant to be 148 cm. To fix it, you should verify the true measurement against the physical log sheets; if it cannot be confirmed, remove the corrupted data point to keep the set clean.",
+        "processText": ""
+      }
+    ]
+  },
+  {
+    "weekNumber": 10,
+    "weekTitle": "3D GEOMETRY (SHAPES AND NETS)",
+    "questions": [
+      {
+        "questionNumber": 1,
+        "questionText": "Identify and list the individual 2D shapes that form all the faces of a regular triangular prism.",
+        "answerText": "2 identical triangles (forming the parallel bases) and 3 rectangles (forming the connecting sides).",
+        "processText": ""
+      },
+      {
+        "questionNumber": 2,
+        "questionText": "State the number of faces, edges, and vertices found on a standard cube.",
+        "answerText": "6 faces, 12 edges, and 8 vertices.",
+        "processText": ""
+      },
+      {
+        "questionNumber": 3,
+        "questionText": "A 3D solid features 1 flat hexagonal base and 6 triangular faces that meet at an apex point at the top. Is this a prism or a pyramid? State its full geometric name.",
+        "answerText": "It is a pyramid; its full name is a hexagonal pyramid.",
+        "processText": ""
+      },
+      {
+        "questionNumber": 4,
+        "questionText": "A mystery solid contains exactly 5 faces, 9 edges, and 6 vertices. What is the name of this shape?",
+        "answerText": "A triangular prism.",
+        "processText": ""
+      },
+      {
+        "questionNumber": 5,
+        "questionText": "True or False: A pyramid can have lateral faces (sides) shaped like rectangles. Explain your answer.",
+        "answerText": "False. By definition, a pyramid's lateral faces must always be triangles that meet at a shared apex point at the top.",
+        "processText": ""
+      },
+      {
+        "questionNumber": 6,
+        "questionText": "True or False: A prism must have two identical bases that are perfectly parallel to each other.",
+        "answerText": "True.",
+        "processText": ""
+      },
+      {
+        "questionNumber": 7,
+        "questionText": "If you open and unroll a standard cylinder flat onto a workbench, what flat 2D shapes make up its net?",
+        "answerText": "1 large rectangle (the curved body) and 2 identical circles (the top and bottom caps).",
+        "processText": ""
+      },
+      {
+        "questionNumber": 8,
+        "questionText": "Describe the layout of the net for a square-based pyramid.",
+        "answerText": "The net consists of a central square base, with 4 identical triangles branching outward from each of its four edges.",
+        "processText": ""
+      },
+      {
+        "questionNumber": 9,
+        "questionText": "Imagine looking directly down from above at a right triangular prism standing upright on its triangular base. What 2D shape do you see from this top view?",
+        "answerText": "A triangle.",
+        "processText": ""
+      },
+      {
+        "questionNumber": 10,
+        "questionText": "A solid shape contains 2 identical hexagonal bases and 6 rectangular faces connecting them. Calculate the total number of vertices this solid has.",
+        "answerText": "12 vertices (Process: 6 vertices on the top hexagon plus 6 vertices on the bottom hexagon).",
+        "processText": ""
+      }
+    ]
+  },
+  {
+    "weekNumber": 11,
+    "weekTitle": "VOLUME OF PRISMS",
+    "questions": [
+      {
+        "questionNumber": 1,
+        "questionText": "Calculate the volume of a plastic storage cube that features a side length of 6 cm.",
+        "answerText": "216 cm^3",
+        "processText": "Volume = side^3 = 6 x 6 x 6 = 216"
+      },
+      {
+        "questionNumber": 2,
+        "questionText": "A rectangular tissue box measures 20 cm long, 10 cm wide, and 8 cm high. Find its volume.",
+        "answerText": "1600 cm^3",
+        "processText": "Volume = length x width x height = 20 x 10 x 8 = 1600"
+      },
+      {
+        "questionNumber": 3,
+        "questionText": "Calculate the volume of a right triangular prism where the triangular cross-section has a base of 8 cm and a height of 5 cm, and the total depth of the prism is 12 cm.",
+        "answerText": "240 cm^3",
+        "processText": "Area of the triangle base = 0.5 x 8 x 5 = 20 cm^2. Volume = 20 x 12 = 240"
+      },
+      {
+        "questionNumber": 4,
+        "questionText": "A rectangular prism has a known volume of 150 cm^3. If its length is 5 cm and its width is 3 cm, find its missing height.",
+        "answerText": "10 cm",
+        "processText": "150 = 5 x 3 x height -> 150 = 15h -> height = 10"
+      },
+      {
+        "questionNumber": 5,
+        "questionText": "Calculate the total volume of a compound step-shape built by fusing two rectangular blocks together:\nBlock A measures 3 cm x 4 cm x 5 cm.\nBlock B measures 2 cm x 3 cm x 6 cm.",
+        "answerText": "96 cm^3",
+        "processText": "Volume A = 3 x 4 x 5 = 60 cm^3. Volume B = 2 x 3 x 6 = 36 cm^3. Total volume = 60 + 36 = 96"
+      },
+      {
+        "questionNumber": 6,
+        "questionText": "An aquarium tank is a rectangular prism measuring 50 cm long, 30 cm wide, and 20 cm deep. Given that 1 cm^3 = 1 mL, how many liters of water does it hold when completely full?",
+        "answerText": "30 Liters",
+        "processText": "Volume = 50 x 30 x 20 = 30,000 cm^3 = 30,000 mL. Converting to liters: 30,000 / 1000 = 30 L"
+      },
+      {
+        "questionNumber": 7,
+        "questionText": "The irregular cross-sectional face of a specialized prism has a calculated area of 35 cm^2. If the length of the prism is 15 cm, what is its total volume?",
+        "answerText": "525 cm^3",
+        "processText": "Volume = Base Area x length = 35 x 15 = 525"
+      },
+      {
+        "questionNumber": 8,
+        "questionText": "A commercial shipping container measures 12 m long, 2.5 m wide, and 2 m high. Compute the total interior space volume.",
+        "answerText": "60 m^3",
+        "processText": "Volume = 12 x 2.5 x 2 = 60"
+      },
+      {
+        "questionNumber": 9,
+        "questionText": "Find the total volume of a compound structure made of a rectangular prism base (10 cm long, 4 cm wide, 5 cm high) topped symmetrically by a right triangular prism. The triangular prism shares the same length (10 cm) and width (4 cm), and features a triangle height of 3 cm.",
+        "answerText": "260 cm^3",
+        "processText": "Rectangular base volume = 10 x 4 x 5 = 200 cm^3. Triangular top volume = (0.5 x 4 x 3) x 10 = 6 x 10 = 60 cm^3. Combined Volume = 200 + 60 = 260"
+      },
+      {
+        "questionNumber": 10,
+        "questionText": "Explain why volume calculations must always be recorded using cubic units (e.g., cm^3, m^3) instead of square units (e.g., cm^2, m^2).",
+        "answerText": "Square units measure two-dimensional space (flat surface area). Volume measures three-dimensional space, requiring three perpendicular measurements (length, width, and height) to be multiplied together, which mathematically produces cubic values.",
+        "processText": ""
+      }
+    ]
+  }
+];
+
+    // State Variables
+    let currentWeekIndex = 0;
+    let currentQuestionIndex = 0;
+    let isAnswerRevealed = false;
+    let isCelebrationState = false;
+    let isDashboardState = true;
+    let confetti = null;
+
+    // Confetti Animation Engine
+    class ConfettiEngine {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.particles = [];
+        this.colors = ['#f59e0b', '#10b981', '#06b6d4', '#8b5cf6', '#ec4899'];
+        this.active = false;
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+      }
+      
+      resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+      }
+      
+      start() {
+        this.particles = [];
+        this.active = true;
+        for (let i = 0; i < 120; i++) {
+          this.particles.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height - this.canvas.height,
+            r: Math.random() * 6 + 4,
+            d: Math.random() * this.canvas.height,
+            color: this.colors[Math.floor(Math.random() * this.colors.length)],
+            tilt: Math.random() * 10 - 5,
+            tiltAngleIncremental: Math.random() * 0.05 + 0.02,
+            tiltAngle: 0
+          });
+        }
+        this.animate();
+      }
+      
+      stop() {
+        this.active = false;
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      }
+      
+      animate() {
+        if (!this.active) return;
+        requestAnimationFrame(() => this.animate());
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        for (let i = 0; i < this.particles.length; i++) {
+          let p = this.particles[i];
+          p.tiltAngle += p.tiltAngleIncremental;
+          p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+          p.x += Math.sin(p.tiltAngle);
+          p.tilt = Math.sin(p.tiltAngle - i / 3) * 12;
+          
+          if (p.y > this.canvas.height) {
+            p.y = -20;
+            p.x = Math.random() * this.canvas.width;
+          }
+          
+          this.ctx.beginPath();
+          this.ctx.lineWidth = p.r;
+          this.ctx.strokeStyle = p.color;
+          this.ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+          this.ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+          this.ctx.stroke();
+        }
+      }
+    }
+
+    // Text formatting function for fractions, operators, variables and negative signs
+    function formatMath(text) {
+      if (!text) return "";
+      
+      let formatted = text;
+      
+      // Standardize degrees C display to modern °C symbol
+      formatted = formatted.replace(/degrees\s+C\b/g, '&deg;C');
+      
+      // Superscripts for exponents (e.g. 2^2, cm^3, m^3)
+      formatted = formatted.replace(/\^(\d+)/g, '<sup>$1</sup>');
+      
+      // Real mathematical multiplication symbol
+      formatted = formatted.replace(/\s+x\s+/g, ' &times; ');
+      formatted = formatted.replace(/\s*\*\s*/g, ' &times; ');
+      
+      // Fractions layout (e.g. 24/36, y/3)
+      formatted = formatted.replace(/\b(\d+|[a-zA-Z])\/(\d+)\b/g, 
+        '<span class="fraction"><span class="num">$1</span><span class="den">$2</span></span>');
+      
+      // Variables: numeric coefficients followed by single letters (e.g. 2x, 8x, 5a)
+      formatted = formatted.replace(/(\d+(?:\.\d+)?)([xyabckmnC])\b/g, '$1<span class="math-var">$2</span>');
+      
+      // Standalone variables (e.g. x, y, b, c, m, n, k, C)
+      formatted = formatted.replace(/\b([xybckmnC])\b/g, '<span class="math-var">$1</span>');
+      
+      // Standalone 'a' as a variable when surrounded by math context/operators
+      formatted = formatted.replace(/(\s+[\+\-\=&times;]\s+)(a)\b/g, '$1<span class="math-var">$2</span>');
+      formatted = formatted.replace(/\b(a)(\s+[\+\-\=&times;]\s+)/g, '<span class="math-var">$1</span>$2');
+      
+      // Negative integers: convert dash to non-breaking &minus;
+      formatted = formatted.replace(/(^|[\s(])-(\d+)/g, '$1&minus;$2');
+      
+      return formatted;
+    }
+
+    // Dynamic Font-Sizing Engine (Fits text comfortably on the screen without overflow)
+    function fitText(element, maxFontSizeVh) {
+      element.style.fontSize = maxFontSizeVh + 'vh';
+      let fontSize = maxFontSizeVh;
+      const parent = element.parentElement;
+      if (!parent) return;
+      
+      // Shrink step-by-step until element scrollheight is within parent bounds
+      while ((element.scrollHeight > parent.clientHeight || element.scrollWidth > parent.clientWidth) && fontSize > 1.2) {
+        fontSize -= 0.1;
+        element.style.fontSize = fontSize + 'vh';
+      }
+    }
+
+    function autoSizeCardText() {
+      const qText = document.getElementById('question-text');
+      const aText = document.getElementById('answer-text');
+      const pText = document.getElementById('process-text');
+      
+      if (qText) fitText(qText, 4.8);
+      if (aText) fitText(aText, 6.8); // ANSWER WAY BIGGER (6.8vh)
+      if (pText) fitText(pText, 2.2); // WORKINGS SMALLER (2.2vh)
+    }
+
+    // Render Dashboard View Weeks grid
+    function buildDashboard() {
+      const grid = document.getElementById('weeks-grid');
+      grid.innerHTML = "";
+      
+      weeksData.forEach((w, index) => {
+        const card = document.createElement('div');
+        card.className = 'week-card';
+        card.onclick = () => jumpToWeek(index);
+        
+        card.innerHTML = `
+          <div class="week-card-number">WEEK ${w.weekNumber}</div>
+          <div class="week-card-title">${w.weekTitle}</div>
+          <div class="week-card-questions">10 Questions</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Show Dashboard State
+    function showDashboard() {
+      isDashboardState = true;
+      document.getElementById('dashboard-view').style.display = 'flex';
+      document.getElementById('deck-view').style.display = 'none';
+      if (confetti) confetti.stop();
+    }
+
+    // Initialize UI Sidebar Week selector
+    function buildSidebar() {
+      const menu = document.getElementById('sidebar-menu');
+      menu.innerHTML = "";
+      
+      weeksData.forEach((w, index) => {
+        const btn = document.createElement('button');
+        btn.className = `menu-item ${index === currentWeekIndex ? 'active' : ''}`;
+        btn.onclick = () => jumpToWeek(index);
+        
+        btn.innerHTML = `
+          <span class="menu-item-week">Week ${w.weekNumber}</span>
+          <span class="menu-item-title">${w.weekTitle}</span>
+        `;
+        menu.appendChild(btn);
+      });
+    }
+
+    // Open/Close Sidebar Drawer
+    function toggleSidebar(open) {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      
+      if (open) {
+        sidebar.classList.add('open');
+        overlay.classList.add('open');
+      } else {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+      }
+    }
+
+    // Transition Animations and Slide loader
+    function changeQuestionState(direction, callback) {
+      const card = document.getElementById('slide-card');
+      const exitClass = direction === 'next' ? 'slide-exit-next' : 'slide-exit-prev';
+      const enterClass = direction === 'next' ? 'slide-enter-next' : 'slide-enter-prev';
+      
+      // Trigger card slide-out transition
+      card.classList.add(exitClass);
+      
+      setTimeout(() => {
+        callback(); // State update
+        
+        // Remove exit class and snap to initial enter coordinates
+        card.classList.remove(exitClass);
+        card.classList.add(enterClass);
+        
+        // Force reflow layout
+        card.offsetHeight;
+        
+        // Remove enter class to let the card transition to default centered coordinates
+        card.classList.remove(enterClass);
+      }, 250);
+    }
+
+    // Render Question Slide content
+    function renderCard() {
+      const card = document.getElementById('slide-card');
+      
+      if (isCelebrationState) {
+        confetti.start();
+        
+        card.innerHTML = `
+          <div class="celebration-card">
+            <div class="trophy-icon">🏆</div>
+            <div class="celebration-text-wrapper">
+              <h1 class="celebration-title">Review Completed!</h1>
+              <p class="celebration-subtitle">Congratulations! You have completed all 11 weeks of the Term 1 & 2 Mathematics Review (110 questions total).</p>
+            </div>
+            <div class="celebration-buttons">
+              <button class="btn btn-primary" onclick="restartReview()">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                </svg>
+                <span>RESTART REVIEW</span>
+              </button>
+              <button class="btn btn-secondary" onclick="showDashboard()">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>BACK TO WEEKS</span>
+              </button>
+            </div>
+          </div>
+        `;
+        
+        // Hide standard header title and slide numbers, show completion style
+        document.getElementById('week-label').textContent = "CONGRATULATIONS";
+        document.getElementById('week-title').textContent = "ALL REVIEWS COMPLETED";
+        document.getElementById('slide-counter').textContent = "Term 1-2 Complete";
+        document.getElementById('progress-bar').style.width = "100%";
+        document.getElementById('prev-btn').disabled = false;
+        
+        // Toggle footer button text
+        document.getElementById('next-btn-text').textContent = "RESTART";
+        return;
+      }
+      
+      confetti.stop();
+      
+      const week = weeksData[currentWeekIndex];
+      const q = week.questions[currentQuestionIndex];
+      
+      const formattedQuestion = formatMath(q.questionText);
+      const formattedAnswer = formatMath(q.answerText);
+      const formattedProcess = formatMath(q.processText);
+      
+      // Determine if a step-by-step process/working exists
+      const hasProcess = q.processText.trim() !== "";
+      
+      card.innerHTML = `
+        <!-- Question Box -->
+        <div class="question-box">
+          <div id="question-text">${formattedQuestion}</div>
+        </div>
+        
+        <!-- Divider -->
+        <div class="card-divider"></div>
+        
+        <!-- Reveal Section -->
+        <div class="reveal-section">
+          <!-- Reveal Button -->
+          <button class="reveal-btn" id="reveal-btn" onclick="revealAnswer()" style="display: ${isAnswerRevealed ? 'none' : 'flex'}">
+            <span class="reveal-btn-glow"></span>
+            <span class="reveal-btn-text">REVEAL ANSWER</span>
+            <span class="reveal-btn-hint">Press SPACE or Click</span>
+          </button>
+          
+          <!-- Answer & Workings Section -->
+          <div class="answer-details ${isAnswerRevealed ? 'visible' : ''}" id="answer-details" style="display: ${isAnswerRevealed ? 'flex' : 'none'}">
+            <div class="answer-card">
+              <span class="card-label">ANSWER</span>
+              <div class="card-content answer-content" id="answer-text">${formattedAnswer}</div>
+            </div>
+            
+            <div class="process-card" id="process-card-container" style="display: ${hasProcess ? 'flex' : 'none'}">
+              <span class="card-label">WORKING PROCESS</span>
+              <div class="card-content process-content" id="process-text">${formattedProcess}</div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Update header details
+      document.getElementById('week-label').textContent = `WEEK ${week.weekNumber}`;
+      document.getElementById('week-title').textContent = week.weekTitle;
+      document.getElementById('slide-counter').textContent = `Question ${currentQuestionIndex + 1} of 10`;
+      
+      // Progress Bar width calculation
+      const progressPercent = ((currentQuestionIndex + 1) / 10) * 100;
+      document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+      
+      // Prev Button disabled checks
+      document.getElementById('prev-btn').disabled = (currentWeekIndex === 0 && currentQuestionIndex === 0);
+      
+      // Next/Reveal Button display text
+      document.getElementById('next-btn-text').textContent = isAnswerRevealed ? "NEXT" : "REVEAL";
+      
+      // Render the bottom navigation dot indicators
+      renderDots();
+      
+      // Recalculate font sizing constraints
+      setTimeout(autoSizeCardText, 10);
+    }
+
+    // Nav Dot indicator renderer
+    function renderDots() {
+      const dotsContainer = document.getElementById('nav-dots');
+      dotsContainer.innerHTML = "";
+      
+      for (let i = 0; i < 10; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        
+        if (i === currentQuestionIndex && !isCelebrationState) {
+          dot.classList.add('active');
+        } else if (i < currentQuestionIndex || isCelebrationState) {
+          dot.classList.add('completed');
+        }
+        
+        dot.setAttribute('data-q', `Q${i + 1}`);
+        dot.onclick = () => {
+          if (isCelebrationState) {
+            isCelebrationState = false;
+          }
+          jumpToQuestion(i);
+        };
+        dotsContainer.appendChild(dot);
+      }
+    }
+
+    // Reveal Logic
+    function revealAnswer() {
+      if (isAnswerRevealed || isCelebrationState) return;
+      
+      isAnswerRevealed = true;
+      
+      const btn = document.getElementById('reveal-btn');
+      const details = document.getElementById('answer-details');
+      const nextBtnText = document.getElementById('next-btn-text');
+      
+      if (btn) btn.style.display = 'none';
+      if (details) {
+        details.style.display = 'flex';
+        // Force reflow
+        details.offsetHeight;
+        details.classList.add('visible');
+      }
+      if (nextBtnText) nextBtnText.textContent = "NEXT";
+      
+      // Recalculate font sizes of newly revealed items
+      setTimeout(autoSizeCardText, 10);
+    }
+
+    // Next Action Control Flow (Presenter Clicker compatible)
+    function nextQuestion() {
+      // If we are on the celebration screen, next restart the entire deck
+      if (isCelebrationState) {
+        restartReview();
+        return;
+      }
+      
+      // Flow 1: If answer is hidden, reveal it first
+      if (!isAnswerRevealed) {
+        revealAnswer();
+        return;
+      }
+      
+      // Flow 2: If answer is already revealed, move forward
+      if (currentQuestionIndex < 9) {
+        // Move to next question within the same week
+        changeQuestionState('next', () => {
+          currentQuestionIndex++;
+          isAnswerRevealed = false;
+        });
+      } else {
+        // Reached Question 10 of current week. Move to next week or completion.
+        if (currentWeekIndex < 10) {
+          changeQuestionState('next', () => {
+            currentWeekIndex++;
+            currentQuestionIndex = 0;
+            isAnswerRevealed = false;
+            buildSidebar(); // Update sidebar active item
+          });
+        } else {
+          // Reached final Question of Week 11 -> Celebration State
+          changeQuestionState('next', () => {
+            isCelebrationState = true;
+            isAnswerRevealed = false;
+          });
+        }
+      }
+    }
+
+    // Previous Action Control Flow
+    function prevQuestion() {
+      if (isCelebrationState) {
+        changeQuestionState('prev', () => {
+          isCelebrationState = false;
+          currentWeekIndex = 10;
+          currentQuestionIndex = 9;
+          isAnswerRevealed = true; // Show last question revealed
+          buildSidebar();
+        });
+        return;
+      }
+      
+      if (currentQuestionIndex > 0) {
+        changeQuestionState('prev', () => {
+          currentQuestionIndex--;
+          isAnswerRevealed = false;
+        });
+      } else {
+        // Reached Question 1. Go back to previous week Question 10.
+        if (currentWeekIndex > 0) {
+          changeQuestionState('prev', () => {
+            currentWeekIndex--;
+            currentQuestionIndex = 9;
+            isAnswerRevealed = false;
+            buildSidebar();
+          });
+        }
+      }
+    }
+
+    // Week jump selectors
+    function jumpToWeek(weekIdx) {
+      isCelebrationState = false;
+      isDashboardState = false;
+      toggleSidebar(false);
+      
+      currentWeekIndex = weekIdx;
+      currentQuestionIndex = 0;
+      isAnswerRevealed = false;
+      
+      document.getElementById('dashboard-view').style.display = 'none';
+      document.getElementById('deck-view').style.display = 'flex';
+      
+      buildSidebar();
+      renderCard();
+    }
+
+    // Direct question dot jump selectors
+    function jumpToQuestion(qIdx) {
+      if (currentQuestionIndex === qIdx) return;
+      const dir = qIdx > currentQuestionIndex ? 'next' : 'prev';
+      
+      changeQuestionState(dir, () => {
+        currentQuestionIndex = qIdx;
+        isAnswerRevealed = false;
+      });
+    }
+
+    function restartReview() {
+      isCelebrationState = false;
+      isDashboardState = false;
+      toggleSidebar(false);
+      
+      currentWeekIndex = 0;
+      currentQuestionIndex = 0;
+      isAnswerRevealed = false;
+      
+      document.getElementById('dashboard-view').style.display = 'none';
+      document.getElementById('deck-view').style.display = 'flex';
+      
+      buildSidebar();
+      renderCard();
+    }
+
+    // Keyboard Shortcuts Listener
+    window.addEventListener('keydown', (e) => {
+      // If we are on the dashboard, number keys can jump to weeks 1-9
+      if (isDashboardState) {
+        if (e.key >= '1' && e.key <= '9') {
+          const idx = parseInt(e.key) - 1;
+          if (idx < weeksData.length) jumpToWeek(idx);
+        }
+        return;
+      }
+
+      // Disable shortcuts when sidebar is open to prevent jumping behind drawer
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar.classList.contains('open')) {
+        if (e.key === 'Escape') toggleSidebar(false);
+        return;
+      }
+      
+      switch (e.key) {
+        case ' ':
+          e.preventDefault(); // Prevents page scrolling
+          nextQuestion();
+          break;
+        case 'ArrowRight':
+          nextQuestion();
+          break;
+        case 'ArrowLeft':
+          prevQuestion();
+          break;
+        case 'Enter':
+          nextQuestion();
+          break;
+        case 'm':
+        case 'M':
+          toggleSidebar(true);
+          break;
+        case 'Escape':
+          showDashboard();
+          break;
+      }
+    });
+
+    // Screen resizing listener to re-fit sizes
+    window.addEventListener('resize', autoSizeCardText);
+
+    // Initializer
+    window.addEventListener('DOMContentLoaded', () => {
+      const canvas = document.getElementById('confetti-canvas');
+      confetti = new ConfettiEngine(canvas);
+      
+      buildDashboard();
+      buildSidebar();
+      showDashboard();
+    });
+  </script>
+</body>
+</html>
