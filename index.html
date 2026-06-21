@@ -2,33 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Maths Review - Terms 1 & 2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Terms 1 & 2 Mathematics Review</title>
   
-  <!-- Modern Fonts -->
+  <!-- Premium Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <style>
+    /* Global Variables and Theme */
     :root {
-      --bg-gradient: radial-gradient(circle at 50% 50%, #0d111d 0%, #07080e 100%);
-      --panel-bg: rgba(255, 255, 255, 0.025);
-      --panel-border: rgba(255, 255, 255, 0.07);
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --text-muted: #475569;
+      --bg-stage: #f3f4f6;       /* Presentation stage background */
+      --bg-slide: #ffffff;       /* Pure white slide background */
+      --text-main: #1f2937;      /* Dark charcoal */
+      --text-muted: #6b7280;     /* Slate gray for notes/subtitles */
+      --border-slide: #e5e7eb;   /* Border for slide effect */
+      --accent-blue: #2563eb;
       
-      --accent-purple: #8b5cf6;
-      --accent-purple-glow: rgba(139, 92, 246, 0.4);
-      --accent-cyan: #06b6d4;
-      --accent-cyan-glow: rgba(6, 182, 212, 0.4);
-      --accent-green: #10b981;
-      --accent-green-glow: rgba(16, 185, 129, 0.4);
+      /* Badge styles */
+      --algebra-bg: #faf5ff;
+      --algebra-text: #6b21a8;
+      --algebra-border: #e9d5ff;
       
-      --shadow-lg: 0 20px 50px -15px rgba(0, 0, 0, 0.7);
-      --transition-smooth: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
-      --transition-fast: all 0.15s ease;
+      --arithmetic-bg: #eff6ff;
+      --arithmetic-text: #1e40af;
+      --arithmetic-border: #bfdbfe;
+      
+      --probability-bg: #fff7ed;
+      --probability-text: #c2410c;
+      --probability-border: #ffedd5;
+      
+      --statistics-bg: #f0fdfa;
+      --statistics-text: #0f766e;
+      --statistics-border: #ccfbf1;
+      
+      --geometry-bg: #f0fdf4;
+      --geometry-text: #166534;
+      --geometry-border: #bbf7d0;
     }
 
     * {
@@ -38,673 +49,315 @@
       user-select: none;
     }
 
-    body {
-      background: var(--bg-gradient);
-      color: var(--text-primary);
-      font-family: 'Inter', sans-serif;
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-
-    /* Fullscreen Confetti Canvas */
-    #confetti-canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
+    html, body {
       width: 100%;
       height: 100%;
-      pointer-events: none;
-      z-index: 90;
-    }
-
-    /* Dashboard (Week Selector Grid) View */
-    .dashboard-view {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      width: 100vw;
-      padding: 6vh 6vw;
-      overflow-y: auto;
-      z-index: 10;
-      position: absolute;
-      top: 0;
-      left: 0;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
-    }
-
-    .dashboard-view::-webkit-scrollbar {
-      width: 6px;
-    }
-    .dashboard-view::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
-    }
-
-    .dashboard-header {
-      text-align: center;
-      margin-bottom: 5vh;
-    }
-
-    .dashboard-header h1 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 4.8vh;
-      font-weight: 800;
-      background: linear-gradient(135deg, #c084fc, #22d3ee);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 1.2vh;
-      letter-spacing: -0.01em;
-    }
-
-    .dashboard-header p {
-      font-size: 2vh;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    .weeks-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-      gap: 2.5vh 2vw;
-      max-width: 1600px;
-      margin: 0 auto;
-      width: 100%;
-      padding-bottom: 4vh;
-    }
-
-    .week-card {
-      background: var(--panel-bg);
-      border: 1px solid var(--panel-border);
-      border-radius: 22px;
-      padding: 3.5vh 2.2vw;
-      cursor: pointer;
-      transition: var(--transition-smooth);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 1.5vh;
-      position: relative;
       overflow: hidden;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      height: 18vh;
-      min-height: 140px;
-    }
-
-    .week-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.04), transparent 70%);
-      z-index: 0;
-    }
-
-    .week-card:hover {
-      transform: translateY(-5px) scale(1.02);
-      border-color: rgba(139, 92, 246, 0.35);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(139, 92, 246, 0.12);
-    }
-
-    .week-card-number {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.5vh;
-      font-weight: 700;
-      color: var(--accent-purple);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      position: relative;
-      z-index: 1;
-    }
-
-    .week-card-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 2.3vh;
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 1.3;
-      margin-top: auto;
-      position: relative;
-      z-index: 1;
-    }
-
-    .week-card-questions {
-      font-size: 1.4vh;
-      color: var(--text-secondary);
-      font-weight: 500;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Sidebar Drawer Styles */
-    .sidebar-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      z-index: 99;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-
-    .sidebar-overlay.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: -420px;
-      width: 420px;
-      height: 100vh;
-      background: rgba(8, 10, 20, 0.88);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border-right: 1px solid rgba(255, 255, 255, 0.08);
-      z-index: 100;
-      transition: left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-      display: flex;
-      flex-direction: column;
-      box-shadow: 20px 0 50px rgba(0, 0, 0, 0.6);
-    }
-
-    .sidebar.open {
-      left: 0;
-    }
-
-    .sidebar-header {
-      padding: 4vh 2vw 2vh 2vw;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-
-    .sidebar-header h2 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 2.8vh;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #a78bfa, #22d3ee);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .sidebar-header p {
-      font-size: 1.5vh;
-      color: var(--text-secondary);
-      font-weight: 500;
-      margin-top: 0.5vh;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 3.5vh;
-      right: 2vw;
-      background: transparent;
-      border: none;
-      color: var(--text-secondary);
-      font-size: 3.5vh;
-      cursor: pointer;
-      line-height: 1;
-      transition: var(--transition-fast);
-    }
-
-    .close-btn:hover {
-      color: white;
-    }
-
-    .sidebar-menu {
-      flex: 1;
-      overflow-y: auto;
-      padding: 2vh 1.2vw;
-      display: flex;
-      flex-direction: column;
-      gap: 1.2vh;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
-    }
-
-    .sidebar-menu::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .sidebar-menu::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
-    }
-
-    .menu-item {
-      padding: 1.8vh 1.5vw;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.01);
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      cursor: pointer;
-      transition: var(--transition-fast);
-      display: flex;
-      flex-direction: column;
-      gap: 0.4vh;
-      text-align: left;
-    }
-
-    .menu-item:hover {
-      background: rgba(255, 255, 255, 0.03);
-      border-color: rgba(255, 255, 255, 0.08);
-      transform: translateX(3px);
-    }
-
-    .menu-item.active {
-      background: rgba(139, 92, 246, 0.07);
-      border-color: rgba(139, 92, 246, 0.25);
-      box-shadow: inset 0 0 15px rgba(139, 92, 246, 0.05);
-    }
-
-    .menu-item-week {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.3vh;
-      font-weight: 700;
-      color: var(--accent-purple);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .menu-item.active .menu-item-week {
-      color: var(--accent-cyan);
-    }
-
-    .menu-item-title {
-      font-size: 1.7vh;
-      font-weight: 600;
-      color: var(--text-secondary);
-      line-height: 1.25;
-    }
-
-    .menu-item.active .menu-item-title {
-      color: var(--text-primary);
-    }
-
-    /* Main Container layout */
-    .app-container {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      width: 100vw;
-      padding: 3vh 4vw;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 5;
-    }
-
-    /* Top Bar Header */
-    .app-header {
-      height: 10vh;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: relative;
-      padding-bottom: 2vh;
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 1.5vw;
-    }
-
-    .menu-btn {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      color: var(--text-primary);
-      width: 6vh;
-      height: 6vh;
-      border-radius: 14px;
-      cursor: pointer;
+      background-color: var(--bg-stage);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: var(--transition-fast);
     }
 
-    .menu-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.15);
-      transform: scale(1.05);
-    }
-
-    .back-btn {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      color: var(--text-secondary);
-      padding: 1.2vh 2.4vh;
+    /* Widescreen Slide Container */
+    .slide {
+      position: relative;
+      background-color: var(--bg-slide);
       border-radius: 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.8vh;
-      font-size: 1.8vh;
-      font-weight: 600;
-      transition: var(--transition-fast);
-      font-family: 'Outfit', sans-serif;
-    }
-
-    .back-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.15);
-      color: var(--text-primary);
-      transform: translateX(-3px);
-    }
-
-    .back-btn:active {
-      transform: translateX(1px);
-    }
-
-    .week-info {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .week-label {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.6vh;
-      font-weight: 700;
-      color: var(--accent-purple);
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      line-height: 1.2;
-    }
-
-    .week-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 3.2vh;
-      font-weight: 800;
-      color: var(--text-primary);
-      letter-spacing: -0.01em;
-      line-height: 1.1;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-    }
-
-    .slide-counter {
-      font-size: 2vh;
-      font-weight: 600;
-      color: var(--text-secondary);
-      background: rgba(255, 255, 255, 0.03);
-      padding: 1.2vh 2.4vh;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .progress-bar-container {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .progress-bar {
-      height: 100%;
-      width: 10%;
-      background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
-      border-radius: 2px;
-      transition: width 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
-
-    /* Main Slide Deck */
-    .slide-deck {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 3vh 0;
-    }
-
-    .slide-card-container {
-      width: 100%;
-      height: 100%;
-      max-width: 1500px;
-      max-height: 72vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .slide-card {
-      width: 100%;
-      height: 100%;
-      background: var(--panel-bg);
-      border: 1px solid var(--panel-border);
-      border-radius: 28px;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      padding: 4vh 4vw;
+      border: 1px solid var(--border-slide);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 
+                  0 10px 10px -5px rgba(0, 0, 0, 0.03), 
+                  0 0 0 1px rgba(0, 0, 0, 0.03);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      box-shadow: var(--shadow-lg);
-      position: relative;
-      overflow: hidden;
+      padding: 48px;
+      box-sizing: border-box;
       
-      /* Card Slide Transitions */
-      transition: transform 0.28s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.28s cubic-bezier(0.25, 0.8, 0.25, 1);
-      transform: scale(1) translateX(0);
-      opacity: 1;
+      /* Setup for responsive text scaling */
+      container-type: inline-size;
+      container-name: slide;
+      
+      aspect-ratio: 16 / 9;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    /* Slide transition classes */
-    .slide-exit-next {
-      transform: translateX(-80px) scale(0.97);
-      opacity: 0;
-    }
-    .slide-exit-prev {
-      transform: translateX(80px) scale(0.97);
-      opacity: 0;
-    }
-    .slide-enter-next {
-      transform: translateX(80px) scale(0.97);
-      opacity: 0;
-    }
-    .slide-enter-prev {
-      transform: translateX(-80px) scale(0.97);
-      opacity: 0;
+    @media (max-aspect-ratio: 16/9) {
+      .slide {
+        width: 90vw;
+        height: auto;
+      }
     }
 
-    /* Slide Card Sections */
-    .question-box {
-      height: 23vh;
+    @media (min-aspect-ratio: 16/9) {
+      .slide {
+        height: 85vh;
+        width: auto;
+      }
+    }
+
+    /* View containers toggle classes */
+    .view-container {
+      display: none;
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+      box-sizing: border-box;
+      animation: fade-in 0.25s ease-in-out forwards;
+    }
+
+    .view-container.active {
       display: flex;
-      justify-content: center;
-      align-items: center;
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================================
+       VIEW 1: LAUNCH SCREEN STYLES (LARGE FONTS, 2-COLUMN VIEW FOR READABILITY)
+       ========================================================================== */
+    #launch-view {
+      justify-content: flex-start;
+      gap: 32px;
+    }
+
+    .launch-header {
       text-align: center;
-      overflow: hidden;
-      padding: 0 1vw;
+      margin-bottom: 8px;
     }
 
-    #question-text {
-      font-family: 'Inter', sans-serif;
-      font-weight: 500;
-      color: var(--text-primary);
-      line-height: 1.4;
-      width: 100%;
-    }
-
-    .card-divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-      margin: 1.5vh 0;
-    }
-
-    .reveal-section {
-      height: 33vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      width: 100%;
-    }
-
-    /* Large Glowing Reveal Button */
-    .reveal-btn {
-      background: linear-gradient(135deg, #5b21b6, #7c3aed);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      color: white;
-      padding: 3.5vh 6vw;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 15px 35px -5px rgba(124, 58, 237, 0.5), 0 0 30px rgba(124, 58, 237, 0.15);
-      transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.2s ease, border-color 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.8vh;
-    }
-
-    .reveal-btn:hover {
-      transform: translateY(-3px) scale(1.02);
-      border-color: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 20px 45px -5px rgba(124, 58, 237, 0.6), 0 0 40px rgba(124, 58, 237, 0.3);
-    }
-
-    .reveal-btn:active {
-      transform: translateY(1px) scale(0.99);
-    }
-
-    .reveal-btn-glow {
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-      transition: left 0.8s ease;
-    }
-
-    .reveal-btn:hover .reveal-btn-glow {
-      left: 100%;
-    }
-
-    .reveal-btn-text {
-      font-family: 'Outfit', sans-serif;
-      font-size: 3.4vh;
+    .launch-title {
+      font-size: clamp(2.2rem, 4.8cqw, 3.8rem);
       font-weight: 800;
-      letter-spacing: 0.08em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
     }
 
-    .reveal-btn-hint {
-      font-size: 1.5vh;
+    .launch-subtitle {
+      font-size: clamp(1.1rem, 2.2cqw, 1.6rem);
+      color: #4b5563;
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.7);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
     }
 
-    /* Answer Details Card layout */
-    .answer-details {
+    /* Grid of Topic Selection Cards - 2 Columns for huge spacing and text size */
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
       width: 100%;
-      height: 100%;
-      display: none; /* Controlled by Javascript */
-      flex-direction: column;
-      gap: 1.5vh;
-      justify-content: center;
+      flex-grow: 1;
+      overflow-y: auto;
+      padding-right: 8px;
+      margin-bottom: 8px;
     }
 
-    .answer-details.visible {
+    /* Clean modern scrollbar for grid */
+    .topics-grid::-webkit-scrollbar {
+      width: 12px;
+    }
+    .topics-grid::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .topics-grid::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 6px;
+      border: 3px solid #ffffff;
+    }
+    .topics-grid::-webkit-scrollbar-thumb:hover {
+      background-color: #94a3b8;
+    }
+
+    .topic-card {
+      background-color: #ffffff;
+      border: 2px solid var(--border-slide);
+      border-radius: 12px;
+      padding: 24px 30px;
+      cursor: pointer;
       display: flex;
-      animation: slideUpReveal 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-    }
-
-    @keyframes slideUpReveal {
-      from {
-        opacity: 0;
-        transform: translateY(25px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .answer-card, .process-card {
-      background: rgba(255, 255, 255, 0.015);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 18px;
-      padding: 1.5vh 2.5vw;
-      position: relative;
-      display: flex;
       flex-direction: column;
-      justify-content: center;
-      transition: var(--transition-smooth);
+      justify-content: space-between;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: left;
+      min-height: 120px;
     }
 
-    .answer-card {
-      flex: 1.2;
-      border-left: 6px solid var(--accent-green);
-      box-shadow: inset 6px 0 24px -6px rgba(16, 185, 129, 0.12);
+    .topic-card:hover {
+      border-color: var(--accent-blue);
+      background-color: #f9fafb;
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.05);
     }
 
-    .process-card {
-      flex: 0.8;
-      border-left: 4px solid var(--accent-cyan);
-      box-shadow: inset 4px 0 20px -6px rgba(6, 182, 212, 0.08);
-      background: rgba(255, 255, 255, 0.008);
+    .topic-card:active {
+      transform: translateY(0);
     }
 
-    .card-label {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.4vh;
+    .topic-week {
+      font-size: clamp(12px, 1.6cqw, 16px);
       font-weight: 700;
-      color: var(--text-secondary);
-      letter-spacing: 0.12em;
-      margin-bottom: 0.3vh;
+      color: var(--accent-blue);
       text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
     }
 
-    .card-content {
-      font-weight: 600;
-      overflow: hidden;
+    .topic-title {
+      font-size: clamp(1.1rem, 2.2cqw, 1.45rem);
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.35;
+      flex-grow: 1;
+    }
+
+    .topic-meta {
+      font-size: clamp(12px, 1.5cqw, 15px);
+      color: #9ca3af;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    /* ==========================================================================
+       VIEW 2: FLASHCARD PRACTICE SCREEN STYLES (BACK OF THE ROOM READABILITY)
+       ========================================================================== */
+    #flashcard-view {
+      justify-content: space-between;
+    }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      border-bottom: 1px solid #f3f4f6;
+      padding-bottom: 16px;
+    }
+
+    .header-logo {
       display: flex;
       align-items: center;
+      gap: 14px;
     }
 
-    /* Pop-out Huge Answer style */
-    .answer-content {
-      color: var(--accent-green);
-      font-weight: 850;
-      font-family: 'Outfit', sans-serif;
-      text-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
-      transform: scale(1);
+    .logo-dot {
+      width: 14px;
+      height: 14px;
+      background-color: var(--accent-blue);
+      border-radius: 50%;
+    }
+
+    .logo-text {
+      font-size: clamp(15px, 2cqw, 22px);
+      font-weight: 700;
+      color: #4b5563;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* Topic category badge */
+    .op-badge {
+      font-size: clamp(13px, 1.8cqw, 18px);
+      font-weight: 700;
+      padding: 6px 20px;
+      border-radius: 9999px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .badge-algebra { background-color: var(--algebra-bg); color: var(--algebra-text); border-color: var(--algebra-border); }
+    .badge-arithmetic { background-color: var(--arithmetic-bg); color: var(--arithmetic-text); border-color: var(--arithmetic-border); }
+    .badge-probability { background-color: var(--probability-bg); color: var(--probability-text); border-color: var(--probability-border); }
+    .badge-statistics { background-color: var(--statistics-bg); color: var(--statistics-text); border-color: var(--statistics-border); }
+    .badge-geometry { background-color: var(--geometry-bg); color: var(--geometry-text); border-color: var(--geometry-border); }
+
+    /* Main Flashcard Outer Wrapper */
+    .equation-outer {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      overflow: hidden;
+      padding: 24px 0;
+    }
+
+    .equation-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+      
+      /* Slide-out & Slide-in transitions */
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+      will-change: transform, opacity;
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Forward transition sliding classes */
+    .equation-container.slide-out {
       opacity: 0;
-      animation: popOutAnswer 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.2) forwards;
-      animation-delay: 0.08s;
+      transform: translateX(-80px);
     }
 
-    @keyframes popOutAnswer {
+    .equation-container.slide-in {
+      opacity: 0;
+      transform: translateX(80px);
+    }
+
+    /* Backward transition sliding classes */
+    .equation-container.slide-out-right {
+      opacity: 0;
+      transform: translateX(80px);
+    }
+
+    .equation-container.slide-in-left {
+      opacity: 0;
+      transform: translateX(-80px);
+    }
+
+    /* Question Display Size Variants (Applied Dynamically) */
+    .question-display {
+      text-align: center;
+      color: var(--text-main);
+      line-height: 1.45;
+      max-width: 90%;
+      font-weight: 700;
+      animation: fade-in 0.25s ease-out forwards;
+    }
+    .question-display.size-q-large {
+      font-size: clamp(2.4rem, 6.2cqw, 4.8rem);
+    }
+    .question-display.size-q-medium {
+      font-size: clamp(1.8rem, 4.8cqw, 3.4rem);
+    }
+    .question-display.size-q-small {
+      font-size: clamp(1.4rem, 3.8cqw, 2.4rem);
+    }
+
+    /* Centered Answer + Walkthrough Wrapper */
+    .answer-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      width: 100%;
+      max-width: 90%;
+      animation: reveal-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes reveal-pop {
       0% {
-        transform: scale(0.85);
-        opacity: 0;
+        transform: scale(0.92);
+        opacity: 0.5;
       }
       100% {
         transform: scale(1);
@@ -712,1670 +365,2076 @@
       }
     }
 
-    .process-content {
-      color: #cbd5e1;
-      font-family: 'Fira Code', monospace;
-      font-weight: 400;
+    /* Core Answer Size Variants (Applied Dynamically) */
+    .answer-core-text {
+      font-weight: 850;
+      color: #059669; /* Emerald green */
       line-height: 1.25;
     }
-
-    /* Math Expressions Styles */
-    .math-var {
-      font-family: 'Outfit', sans-serif;
-      font-style: italic;
-      font-weight: 600;
-      color: #a5b4fc;
-      text-shadow: 0 0 10px rgba(165, 180, 252, 0.25);
+    .answer-core-text.size-ans-large {
+      font-size: clamp(3.5rem, 10cqw, 7.5rem);
+    }
+    .answer-core-text.size-ans-medium {
+      font-size: clamp(2.6rem, 7.5cqw, 5.5rem);
+    }
+    .answer-core-text.size-ans-small {
+      font-size: clamp(1.8rem, 5.5cqw, 3.8rem);
     }
 
+    /* Walkthrough divider line */
+    .answer-divider {
+      width: 120px;
+      height: 5px;
+      background-color: var(--accent-blue);
+      margin: 24px 0;
+      border-radius: 9999px;
+    }
+
+    /* Solution Walkthrough Size Variants (Applied Dynamically) */
+    .answer-walkthrough-text {
+      font-weight: 600;
+      color: #4b5563; /* Dark slate gray */
+      line-height: 1.45;
+      max-width: 85%;
+    }
+    .answer-walkthrough-text.size-wk-large {
+      font-size: clamp(1.8rem, 4.5cqw, 3.2rem);
+    }
+    .answer-walkthrough-text.size-wk-medium {
+      font-size: clamp(1.4rem, 3.5cqw, 2.4rem);
+    }
+    .answer-walkthrough-text.size-wk-small {
+      font-size: clamp(1.1rem, 2.8cqw, 1.8rem);
+    }
+
+    /* Dynamic Fraction Styling */
     .fraction {
       display: inline-flex;
       flex-direction: column;
       vertical-align: middle;
       text-align: center;
-      font-size: 0.88em;
-      padding: 0 0.15em;
-      line-height: 1;
-      font-weight: 500;
-      font-family: 'Fira Code', monospace;
+      line-height: 1.1;
+      padding: 0 4px;
+      margin: 0 6px;
+      font-weight: inherit;
     }
-    .fraction .num {
-      border-bottom: 1.5px solid currentColor;
-      padding-bottom: 0.05em;
-      min-width: 0.8em;
+    
+    .numerator {
+      border-bottom: 2.5px solid currentColor;
+      padding-bottom: 2px;
+      font-size: 0.9em;
     }
-    .fraction .den {
-      padding-top: 0.05em;
-      min-width: 0.8em;
+    
+    .denominator {
+      padding-top: 2px;
+      font-size: 0.9em;
     }
 
-    /* Bottom Controls Area */
-    .app-footer {
-      height: 10vh;
+    /* Slide Footer Controls */
+    .slide-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-top: 1px solid rgba(255, 255, 255, 0.04);
-      padding-top: 1vh;
-    }
-
-    .nav-btn {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 14px;
-      color: var(--text-primary);
-      padding: 1.6vh 3.5vh;
-      font-size: 1.8vh;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 1vh;
-      transition: var(--transition-fast);
-    }
-
-    .nav-btn:hover:not(:disabled) {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.12);
-      transform: translateY(-2px);
-    }
-
-    .nav-btn:active:not(:disabled) {
-      transform: translateY(1px);
-    }
-
-    .nav-btn:disabled {
-      opacity: 0.25;
-      cursor: not-allowed;
-    }
-
-    .prev-btn {
-      color: var(--text-secondary);
-    }
-
-    .next-btn {
-      background: rgba(139, 92, 246, 0.08);
-      border-color: rgba(139, 92, 246, 0.25);
-      color: #d8b4fe;
-      box-shadow: 0 0 20px rgba(139, 92, 246, 0.03);
-    }
-
-    .next-btn:hover:not(:disabled) {
-      background: rgba(139, 92, 246, 0.18);
-      border-color: rgba(139, 92, 246, 0.4);
-      color: white;
-      box-shadow: 0 0 25px rgba(139, 92, 246, 0.12);
-    }
-
-    /* Progress Navigation Dots */
-    .nav-dots {
-      display: flex;
-      gap: 1.5vw;
-      align-items: center;
-    }
-
-    .dot {
-      width: 1.8vh;
-      height: 1.8vh;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
-      border: 2px solid transparent;
-      cursor: pointer;
-      transition: var(--transition-smooth);
-      position: relative;
-    }
-
-    .dot:hover {
-      transform: scale(1.3);
-      background: rgba(255, 255, 255, 0.25);
-    }
-
-    .dot.active {
-      background: var(--accent-cyan);
-      box-shadow: 0 0 15px var(--accent-cyan);
-      border-color: var(--text-primary);
-      transform: scale(1.25);
-    }
-
-    .dot.completed {
-      background: var(--accent-purple);
-      box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
-    }
-
-    .dot::after {
-      content: attr(data-q);
-      position: absolute;
-      bottom: 2.8vh;
-      left: 50%;
-      transform: translateX(-50%) translateY(5px);
-      background: #0f172a;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: white;
-      padding: 0.4vh 0.8vh;
-      border-radius: 5px;
-      font-size: 1.2vh;
-      font-weight: 700;
-      opacity: 0;
-      pointer-events: none;
-      transition: var(--transition-fast);
-      white-space: nowrap;
-      box-shadow: var(--shadow-lg);
-    }
-
-    .dot:hover::after {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    /* Keyboard Hints Panel */
-    .keyboard-hints {
-      display: flex;
-      gap: 1.5vw;
-      font-size: 1.3vh;
-      color: var(--text-muted);
-    }
-
-    .hint-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5vw;
-    }
-
-    kbd {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
-      padding: 0.2vh 0.6vh;
-      font-family: inherit;
-      font-weight: 700;
-      color: var(--text-secondary);
-    }
-
-    /* Celebration Screen */
-    .celebration-card {
       width: 100%;
-      height: 100%;
+      border-top: 1px solid #f3f4f6;
+      padding-top: 20px;
+    }
+
+    .footer-left {
+      flex: 1;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
+    }
+
+    .footer-center {
+      flex: 0 0 auto;
+    }
+
+    .footer-right {
+      flex: 1;
+      font-size: clamp(14px, 1.8cqw, 22px);
+      color: var(--text-muted);
+      text-align: right;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-group {
+      display: flex;
       align-items: center;
-      text-align: center;
-      gap: 3.5vh;
-      animation: scaleUpCelebration 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+      gap: 16px;
     }
 
-    @keyframes scaleUpCelebration {
-      from {
-        opacity: 0;
-        transform: scale(0.94);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    .trophy-icon {
-      font-size: 11vh;
-      filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.4));
-      animation: bounceTrophy 2.4s infinite ease-in-out;
-      line-height: 1;
-    }
-
-    @keyframes bounceTrophy {
-      0%, 100% {
-        transform: translateY(0) rotate(0deg);
-      }
-      50% {
-        transform: translateY(-12px) rotate(3deg);
-      }
-    }
-
-    .celebration-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 5.5vh;
-      font-weight: 800;
-      background: linear-gradient(135deg, #10b981, #06b6d4, #8b5cf6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 40px rgba(6, 182, 212, 0.15);
-      line-height: 1.1;
-    }
-
-    .celebration-subtitle {
-      font-size: 2.4vh;
-      color: var(--text-secondary);
-      max-width: 650px;
-      line-height: 1.4;
-    }
-
-    .celebration-buttons {
-      display: flex;
-      gap: 1.5vw;
-    }
-
+    /* Large Room readable Buttons */
     .btn {
       border: none;
-      border-radius: 14px;
-      padding: 2vh 4vw;
-      font-size: 2vh;
+      padding: 16px 36px;
+      font-size: clamp(14px, 1.8cqw, 20px);
       font-weight: 700;
+      border-radius: 8px;
       cursor: pointer;
-      transition: var(--transition-fast);
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 1vh;
+      gap: 10px;
+      letter-spacing: 0.03em;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      outline: none;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white;
-      box-shadow: 0 10px 20px rgba(16, 185, 129, 0.25);
+      background-color: #111827;
+      color: #ffffff;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06);
     }
 
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 25px rgba(16, 185, 129, 0.35);
+    .btn-primary:hover:not(:disabled) {
+      background-color: #1f2937;
+      transform: translateY(-1.5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(1px);
     }
 
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--text-primary);
+      background-color: #ffffff;
+      color: #374151;
+      border: 1.5px solid #d1d5db;
     }
 
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.08);
-      transform: translateY(-2px);
+    .btn-secondary:hover:not(:disabled) {
+      background-color: #f9fafb;
+      border-color: #9ca3af;
+      transform: translateY(-1.5px);
     }
 
-    .btn:active {
+    .btn-secondary:active:not(:disabled) {
       transform: translateY(1px);
+    }
+
+    .btn:focus-visible {
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* ==========================================================================
+       VIEW 3: COMPLETION SCREEN STYLES
+       ========================================================================== */
+    #completion-view {
+      justify-content: center;
+    }
+
+    .completion-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      width: 100%;
+      height: 100%;
+      gap: 20px;
+      padding: 40px;
+    }
+
+    .trophy-icon {
+      font-size: clamp(3.5rem, 9cqw, 5.5rem);
+      margin-bottom: 12px;
+      animation: float-bounce 2s infinite ease-in-out;
+    }
+
+    @keyframes float-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .completion-title {
+      font-size: clamp(1.6rem, 4cqw, 2.8rem);
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .completion-subtitle {
+      font-size: clamp(1.1rem, 2.2cqw, 1.5rem);
+      color: #4b5563;
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+
+    .completion-buttons {
+      display: flex;
+      gap: 16px;
+    }
+
+    /* ==========================================================================
+       RESPONSIVE SCREEN OVERRIDES
+       ========================================================================== */
+    @media (max-width: 768px) {
+      .topics-grid {
+        grid-template-columns: 1fr;
+      }
+      .slide {
+        width: 95vw;
+        padding: 24px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Fullscreen Confetti Canvas -->
-  <canvas id="confetti-canvas"></canvas>
-
-  <!-- Sidebar Drawer Overlay -->
-  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar(false)"></div>
+  <!-- Main Slides Deck Card -->
+  <div class="slide">
   
-  <!-- Sidebar Drawer -->
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <h2>Maths Review</h2>
-      <p>Term 1 & 2 • Weeks 1 to 11</p>
-      <button class="close-btn" onclick="toggleSidebar(false)">&times;</button>
+    <!-- VIEW 1: LAUNCH SCREEN -->
+    <div id="launch-view" class="view-container active">
+      <div class="launch-header">
+        <h1 class="launch-title">Terms 1 & 2 Mathematics Review</h1>
+        <p class="launch-subtitle">Select a topic below to begin practice</p>
+      </div>
+      <div id="topics-grid" class="topics-grid">
+        <!-- Topic cards injected dynamically by JavaScript -->
+      </div>
     </div>
-    <div class="sidebar-menu" id="sidebar-menu">
-      <!-- Generated dynamically in Javascript -->
-    </div>
-  </div>
-
-  <!-- Screen 1: Dashboard View -->
-  <div class="dashboard-view" id="dashboard-view">
-    <header class="dashboard-header">
-      <h1>Terms 1 & 2 Mathematics Review</h1>
-      <p>Digital Flashcards for Classroom Display • Select a week below</p>
-    </header>
-    <main class="weeks-grid" id="weeks-grid">
-      <!-- Populated dynamically via JS -->
-    </main>
-  </div>
-
-  <!-- Screen 2: Primary Flashcard Deck Container (Hidden by default) -->
-  <div class="app-container" id="deck-view" style="display: none;">
     
-    <!-- Top Navigation Header -->
-    <header class="app-header">
-      <div class="header-left">
-        <button class="back-btn" onclick="showDashboard()">
-          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-          <span>WEEKS</span>
-        </button>
-        <button class="menu-btn" onclick="toggleSidebar(true)" aria-label="Open menu" style="display: none;">
-          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-        </button>
-        <div class="week-info">
-          <span class="week-label" id="week-label">WEEK 1</span>
-          <h1 class="week-title" id="week-title">ORDER OF OPERATIONS (GEMA) AND INTEGERS</h1>
+    <!-- VIEW 2: FLASHCARD PRACTICE SCREEN -->
+    <div id="flashcard-view" class="view-container">
+      <header class="slide-header">
+        <div class="header-logo">
+          <span class="logo-dot"></span>
+          <span id="header-topic-title" class="logo-text">Topic Title</span>
+        </div>
+        <div id="op-badge" class="op-badge badge-algebra">Algebra</div>
+      </header>
+      
+      <div class="equation-outer">
+        <div id="question-box" class="equation-container">
+          <!-- Question or Answer content completely replaces this area -->
         </div>
       </div>
       
-      <div class="header-right">
-        <div class="slide-counter" id="slide-counter">Question 1 of 10</div>
-      </div>
-      
-      <!-- Linear Progress Bar -->
-      <div class="progress-bar-container">
-        <div class="progress-bar" id="progress-bar"></div>
-      </div>
-    </header>
+      <footer class="slide-footer">
+        <div class="footer-left">
+          <button class="btn btn-secondary" onclick="backToMain()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>All Topics</span>
+          </button>
+        </div>
+        <div class="footer-center">
+          <div class="btn-group">
+            <button id="prev-btn" class="btn btn-secondary" onclick="prevQuestion()" disabled>Back</button>
+            <button id="skip-btn" class="btn btn-secondary" onclick="skipQuestion()">Skip</button>
+            <button id="action-btn" class="btn btn-primary" onclick="handleAction()">
+              <span id="btn-label">Show Answer</span>
+              <svg id="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div id="slide-counter" class="footer-right">
+          Question 1 of 20
+        </div>
+      </footer>
+    </div>
     
-    <!-- Main Flashcard Workspace -->
-    <main class="slide-deck">
-      <div class="slide-card-container">
-        <div class="slide-card" id="slide-card">
-          <!-- Populated dynamically via JS -->
+    <!-- VIEW 3: TOPIC COMPLETION SCREEN -->
+    <div id="completion-view" class="view-container">
+      <div class="completion-content">
+        <div class="trophy-icon">🏆</div>
+        <h2 class="completion-title">Topic Completed!</h2>
+        <p id="completion-subtitle" class="completion-subtitle">Topic Title</p>
+        <div class="completion-buttons">
+          <button class="btn btn-primary" onclick="restartTopic()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+            </svg>
+            <span>Restart Topic</span>
+          </button>
+          <button class="btn btn-secondary" onclick="backToMain()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Select Topic</span>
+          </button>
         </div>
       </div>
-    </main>
-    
-    <!-- Bottom Controls and Indicators -->
-    <footer class="app-footer">
-      <button class="nav-btn prev-btn" id="prev-btn" onclick="prevQuestion()" disabled>
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-        <span>PREVIOUS</span>
-      </button>
-      
-      <div class="nav-dots" id="nav-dots">
-        <!-- 10 Question dots created dynamically -->
-      </div>
-      
-      <div class="keyboard-hints">
-        <span class="hint-item"><kbd>Space</kbd> / <kbd>&rarr;</kbd> Reveal/Next</span>
-        <span class="hint-item"><kbd>&larr;</kbd> Previous</span>
-        <span class="hint-item"><kbd>M</kbd> Menu</span>
-      </div>
-      
-      <button class="nav-btn next-btn" id="next-btn" onclick="nextQuestion()">
-        <span id="next-btn-text">REVEAL</span>
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </button>
-    </footer>
+    </div>
+  
   </div>
 
   <script>
-    // Parsed Data Array
-    const weeksData = [
+    // Hardcoded parsed flashcard data
+    const flashcardData = [
   {
-    "weekNumber": 1,
-    "weekTitle": "ORDER OF OPERATIONS (GEMA) AND INTEGERS",
+    "id": "week_1",
+    "title": "Week 1: ORDER OF OPERATIONS (GEMA) AND INTEGERS",
     "questions": [
       {
-        "questionNumber": 1,
-        "questionText": "Evaluate the expression using the correct order of operations: 15 - 3 x 4 + 2",
-        "answerText": "5",
-        "processText": "15 - 12 + 2 = 3 + 2 = 5"
+        "number": 1,
+        "question": "Evaluate the expression using the correct order of operations: 15 - 3 x 4 + 2",
+        "answer_core": "5",
+        "answer_walkthrough": "Solution: 15 - 12 + 2 = 3 + 2 = 5"
       },
       {
-        "questionNumber": 2,
-        "questionText": "Evaluate the expression: 5 x (3 + 2^2) - 8",
-        "answerText": "27",
-        "processText": "5 x (3 + 4) - 8 = 5 x 7 - 8 = 35 - 8 = 27"
+        "number": 2,
+        "question": "Evaluate the expression: 5 x (3 + 2<sup>2</sup>) - 8",
+        "answer_core": "27",
+        "answer_walkthrough": "Solution: 5 x (3 + 4) - 8 = 5 x 7 - 8 = 35 - 8 = 27"
       },
       {
-        "questionNumber": 3,
-        "questionText": "Arrange the following integers from least to greatest: -9, 4, -2, 0, -6, 3",
-        "answerText": "-9, -6, -2, 0, 3, 4",
-        "processText": ""
+        "number": 3,
+        "question": "Arrange the following integers from least to greatest: -9, 4, -2, 0, -6, 3",
+        "answer_core": "-9, -6, -2, 0, 3, 4",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 4,
-        "questionText": "What is the additive inverse of -18? Write an addition equation to show their sum.",
-        "answerText": "The additive inverse is 18. Equation: -18 + 18 = 0",
-        "processText": ""
+        "number": 4,
+        "question": "What is the additive inverse of -18? Write an addition equation to show their sum.",
+        "answer_core": "The additive inverse is 18. Equation: -18 + 18 = 0",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 5,
-        "questionText": "Compute the sum: -8 + 13",
-        "answerText": "5",
-        "processText": ""
+        "number": 5,
+        "question": "Compute the sum: -8 + 13",
+        "answer_core": "5",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 6,
-        "questionText": "Compute the difference: 6 - (-4)",
-        "answerText": "10",
-        "processText": "6 + 4 = 10"
+        "number": 6,
+        "question": "Compute the difference: 6 - (-4)",
+        "answer_core": "10",
+        "answer_walkthrough": "Solution: 6 + 4 = 10"
       },
       {
-        "questionNumber": 7,
-        "questionText": "Compute: -7 + (-5)",
-        "answerText": "-12",
-        "processText": ""
+        "number": 7,
+        "question": "Compute: -7 + (-5)",
+        "answer_core": "-12",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 8,
-        "questionText": "The thermometer reads -5 degrees C at 6:00 AM. By noon, the temperature rises by 12 degrees C. What is the temperature at noon?",
-        "answerText": "7 degrees C",
-        "processText": "-5 + 12 = 7"
+        "number": 8,
+        "question": "The thermometer reads -5 degrees C at 6:00 AM. By noon, the temperature rises by 12 degrees C. What is the temperature at noon?",
+        "answer_core": "7 degrees C",
+        "answer_walkthrough": "Solution: -5 + 12 = 7"
       },
       {
-        "questionNumber": 9,
-        "questionText": "A bank account is overdrawn with a balance of -$35. If a deposit of $100 is made, what is the new balance?",
-        "answerText": "$65",
-        "processText": "-35 + 100 = 65"
+        "number": 9,
+        "question": "A bank account is overdrawn with a balance of -$35. If a deposit of $100 is made, what is the new balance?",
+        "answer_core": "$65",
+        "answer_walkthrough": "Solution: -35 + 100 = 65"
       },
       {
-        "questionNumber": 10,
-        "questionText": "Evaluate the expression: (24 / 3) x 2 - 5 x (-3)",
-        "answerText": "31",
-        "processText": "8 x 2 - (-15) = 16 + 15 = 31"
+        "number": 10,
+        "question": "Evaluate the expression: (24 &divide; 3) x 2 - 5 x (-3)",
+        "answer_core": "31",
+        "answer_walkthrough": "Solution: 8 x 2 - (-15) = 16 + 15 = 31"
+      },
+      {
+        "number": 11,
+        "question": "Evaluate the expression using the correct order of operations: 20 - 4 x 3 + 5",
+        "answer_core": "13",
+        "answer_walkthrough": "Solution: 20 - 12 + 5 = 8 + 5 = 13"
+      },
+      {
+        "number": 12,
+        "question": "Evaluate the expression: 3 x (4 + 3<sup>2</sup>) - 15",
+        "answer_core": "24",
+        "answer_walkthrough": "Solution: 3 x (4 + 9) - 15 = 3 x 13 - 15 = 39 - 15 = 24"
+      },
+      {
+        "number": 13,
+        "question": "Arrange the following integers from least to greatest: -12, 7, -1, 0, -5, 2",
+        "answer_core": "-12, -5, -1, 0, 2, 7",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 14,
+        "question": "What is the additive inverse of -25? Write an addition equation to show their sum.",
+        "answer_core": "The additive inverse is 25. Equation: -25 + 25 = 0",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 15,
+        "question": "Compute the sum: -14 + 19",
+        "answer_core": "5",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 16,
+        "question": "Compute the difference: 8 - (-7)",
+        "answer_core": "15",
+        "answer_walkthrough": "Solution: 8 + 7 = 15"
+      },
+      {
+        "number": 17,
+        "question": "Compute: -9 + (-6)",
+        "answer_core": "-15",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 18,
+        "question": "The thermometer reads -3 degrees C at 5:00 AM. By 2:00 PM, the temperature rises by 15 degrees C. What is the temperature at 2:00 PM?",
+        "answer_core": "12 degrees C",
+        "answer_walkthrough": "Solution: -3 + 15 = 12"
+      },
+      {
+        "number": 19,
+        "question": "A bank account is overdrawn with a balance of -$45. If a deposit of $120 is made, what is the new balance?",
+        "answer_core": "$75",
+        "answer_walkthrough": "Solution: -45 + 120 = 75"
+      },
+      {
+        "number": 20,
+        "question": "Evaluate the expression: (36 &divide; 4) x 3 - 4 x (-2)",
+        "answer_core": "35",
+        "answer_walkthrough": "Solution: 9 x 3 - (-8) = 27 + 8 = 35"
       }
     ]
   },
   {
-    "weekNumber": 2,
-    "weekTitle": "INTRODUCTION TO ALGEBRA AND NUMBER PROPERTIES",
+    "id": "week_2",
+    "title": "Week 2: INTRODUCTION TO ALGEBRA AND NUMBER PROPERTIES",
     "questions": [
       {
-        "questionNumber": 1,
-        "questionText": "Write an algebraic expression for the statement: \"5 more than twice a number x.\"",
-        "answerText": "2x + 5",
-        "processText": ""
+        "number": 1,
+        "question": "Write an algebraic expression for the statement: \"5 more than twice a number x.\"",
+        "answer_core": "2x + 5",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 2,
-        "questionText": "Write an algebraic equation for the statement: \"A number y divided by 3 is equal to 12.\"",
-        "answerText": "y/3 = 12 (or y divided by 3 = 12)",
-        "processText": ""
+        "number": 2,
+        "question": "Write an algebraic equation for the statement: \"A number y divided by 3 is equal to 12.\"",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">y</span><span class=\"denominator\">3</span></span> = 12",
+        "answer_walkthrough": "Alternative: y divided by 3 = 12"
       },
       {
-        "questionNumber": 3,
-        "questionText": "In the expression 8x - 5, identify the variable, the coefficient, and the constant.",
-        "answerText": "Variable: x; Coefficient: 8; Constant: -5",
-        "processText": ""
+        "number": 3,
+        "question": "In the expression 8x - 5, identify the variable, the coefficient, and the constant.",
+        "answer_core": "Variable: x; Coefficient: 8; Constant: -5",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 4,
-        "questionText": "Evaluate the algebraic expression 4m + 7 when m = 6.",
-        "answerText": "31",
-        "processText": "4(6) + 7 = 24 + 7 = 31"
+        "number": 4,
+        "question": "Evaluate the algebraic expression 4m + 7 when m = 6.",
+        "answer_core": "31",
+        "answer_walkthrough": "Solution: 4(6) + 7 = 24 + 7 = 31"
       },
       {
-        "questionNumber": 5,
-        "questionText": "Rewrite and simplify this expression using the commutative property of addition: 5 + x + 9",
-        "answerText": "x + 14",
-        "processText": "x + 5 + 9 = x + 14"
+        "number": 5,
+        "question": "Rewrite and simplify this expression using the commutative property of addition: 5 + x + 9",
+        "answer_core": "x + 14",
+        "answer_walkthrough": "Solution: x + 5 + 9 = x + 14"
       },
       {
-        "questionNumber": 6,
-        "questionText": "Expand the expression using the distributive property: 4(3x + 2)",
-        "answerText": "12x + 8",
-        "processText": ""
+        "number": 6,
+        "question": "Expand the expression using the distributive property: 4(3x + 2)",
+        "answer_core": "12x + 8",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 7,
-        "questionText": "Which mathematical property is explicitly shown by the equation (a + b) + c = a + (b + c)?",
-        "answerText": "The Associative Property of Addition",
-        "processText": ""
+        "number": 7,
+        "question": "Which mathematical property is explicitly shown by the equation (a + b) + c = a + (b + c)?",
+        "answer_core": "The Associative Property of Addition",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 8,
-        "questionText": "Does the commutative property apply to division? Provide a short numerical example to justify your answer.",
-        "answerText": "No. For example, 12 / 4 = 3, but 4 / 12 = 1/3. Since 3 does not equal 1/3, the property does not apply.",
-        "processText": ""
+        "number": 8,
+        "question": "Does the commutative property apply to division? Provide a short numerical example to justify your answer.",
+        "answer_core": "No. For example, 12 &divide; 4 = 3, but 4 &divide; 12 = <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">3</span></span>. Since 3 does not equal <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">3</span></span>, the property does not apply.",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 9,
-        "questionText": "Write an algebraic expression for the total cost of purchasing n apples if each apple costs $1.50.",
-        "answerText": "1.50n (or 1.5n)",
-        "processText": ""
+        "number": 9,
+        "question": "Write an algebraic expression for the total cost of purchasing n apples if each apple costs $1.50.",
+        "answer_core": "1.50n",
+        "answer_walkthrough": "Alternative: 1.5n"
       },
       {
-        "questionNumber": 10,
-        "questionText": "A taxi company charges a flat booking fee of $5 plus $2.50 per kilometer (k) traveled. Write an equation for the total cost (C) of a ride.",
-        "answerText": "C = 2.50k + 5 (or C = 5 + 2.5k)",
-        "processText": ""
+        "number": 10,
+        "question": "A taxi company charges a flat booking fee of $5 plus $2.50 per kilometer (k) traveled. Write an equation for the total cost (C) of a ride.",
+        "answer_core": "C = 2.50k + 5",
+        "answer_walkthrough": "Alternative: C = 5 + 2.5k"
+      },
+      {
+        "number": 11,
+        "question": "Write an algebraic expression for the statement: \"7 less than three times a number x.\"",
+        "answer_core": "3x - 7",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 12,
+        "question": "Write an algebraic equation for the statement: \"A number w multiplied by 4 is equal to 32.\"",
+        "answer_core": "4w = 32",
+        "answer_walkthrough": "Alternative: 4 x w = 32"
+      },
+      {
+        "number": 13,
+        "question": "In the expression 12y - 9, identify the variable, the coefficient, and the constant.",
+        "answer_core": "Variable: y; Coefficient: 12; Constant: -9",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 14,
+        "question": "Evaluate the algebraic expression 5n + 8 when n = 7.",
+        "answer_core": "43",
+        "answer_walkthrough": "Solution: 5(7) + 8 = 35 + 8 = 43"
+      },
+      {
+        "number": 15,
+        "question": "Rewrite and simplify this expression using the commutative property of addition: 8 + y + 11",
+        "answer_core": "y + 19",
+        "answer_walkthrough": "Solution: y + 8 + 11 = y + 19"
+      },
+      {
+        "number": 16,
+        "question": "Expand the expression using the distributive property: 5(2x + 4)",
+        "answer_core": "10x + 20",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 17,
+        "question": "Which mathematical property is explicitly shown by the equation (a x b) x c = a x (b x c)?",
+        "answer_core": "The Associative Property of Multiplication",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 18,
+        "question": "Does the commutative property apply to subtraction? Provide a short numerical example to justify your answer.",
+        "answer_core": "No. For example, 10 - 4 = 6, but 4 - 10 = -6. Since 6 does not equal -6, the property does not apply.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 19,
+        "question": "Write an algebraic expression for the total cost of purchasing m books if each book costs $4.50.",
+        "answer_core": "4.50m",
+        "answer_walkthrough": "Alternative: 4.5m"
+      },
+      {
+        "number": 20,
+        "question": "A bike rental shop charges a base fee of $10 plus $3.50 per hour (h) used. Write an equation for the total cost (C) of a rental.",
+        "answer_core": "C = 3.50h + 10",
+        "answer_walkthrough": "Alternative: C = 10 + 3.5h"
       }
     ]
   },
   {
-    "weekNumber": 3,
-    "weekTitle": "SIMPLIFYING ALGEBRAIC EXPRESSIONS",
+    "id": "week_3",
+    "title": "Week 3: SIMPLIFYING ALGEBRAIC EXPRESSIONS",
     "questions": [
       {
-        "questionNumber": 1,
-        "questionText": "Simplify the expression by collecting like terms: 5a + 2a + a",
-        "answerText": "8a",
-        "processText": ""
+        "number": 1,
+        "question": "Simplify the expression by collecting like terms: 5a + 2a + a",
+        "answer_core": "8a",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 2,
-        "questionText": "Simplify the expression: 9b - 3b + 4b",
-        "answerText": "10b",
-        "processText": ""
+        "number": 2,
+        "question": "Simplify the expression: 9b - 3b + 4b",
+        "answer_core": "10b",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 3,
-        "questionText": "Simplify the expression: 6x + 4y + 3x - y",
-        "answerText": "9x + 3y",
-        "processText": "combine 6x + 3x and 4y - y"
+        "number": 3,
+        "question": "Simplify the expression: 6x + 4y + 3x - y",
+        "answer_core": "9x + 3y",
+        "answer_walkthrough": "Solution: combine 6x + 3x and 4y - y"
       },
       {
-        "questionNumber": 4,
-        "questionText": "Simplify the expression: 12 - 5m + 3 - 2m",
-        "answerText": "15 - 7m",
-        "processText": "combine 12 + 3 and -5m - 2m"
+        "number": 4,
+        "question": "Simplify the expression: 12 - 5m + 3 - 2m",
+        "answer_core": "15 - 7m",
+        "answer_walkthrough": "Solution: combine 12 + 3 and -5m - 2m"
       },
       {
-        "questionNumber": 5,
-        "questionText": "Simplify the multiplication expression: 4 x 3x",
-        "answerText": "12x",
-        "processText": ""
+        "number": 5,
+        "question": "Simplify the multiplication expression: 4 x 3x",
+        "answer_core": "12x",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 6,
-        "questionText": "Simplify the expression: 2a x 6b",
-        "answerText": "12ab",
-        "processText": ""
+        "number": 6,
+        "question": "Simplify the expression: 2a x 6b",
+        "answer_core": "12ab",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 7,
-        "questionText": "Simplify the expression: 7x + 5 - 9x - 8",
-        "answerText": "-2x - 3",
-        "processText": ""
+        "number": 7,
+        "question": "Simplify the expression: 7x + 5 - 9x - 8",
+        "answer_core": "-2x - 3",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 8,
-        "questionText": "Write a simplified algebraic expression for the perimeter of a triangle with side lengths 3x, 4x, and 2x + 1.",
-        "answerText": "9x + 1",
-        "processText": "3x + 4x + 2x + 1 = 9x + 1"
+        "number": 8,
+        "question": "Write a simplified algebraic expression for the perimeter of a triangle with side lengths 3x, 4x, and 2x + 1.",
+        "answer_core": "9x + 1",
+        "answer_walkthrough": "Solution: 3x + 4x + 2x + 1 = 9x + 1"
       },
       {
-        "questionNumber": 9,
-        "questionText": "True or False: 4a + 5b = 9ab. Explain your reasoning.",
-        "answerText": "False. 4a and 5b are not like terms, so they cannot be combined into a single term. The expression is already fully simplified.",
-        "processText": ""
+        "number": 9,
+        "question": "True or False: 4a + 5b = 9ab. Explain your reasoning.",
+        "answer_core": "False. 4a and 5b are not like terms, so they cannot be combined into a single term. The expression is already fully simplified.",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 10,
-        "questionText": "Expand the brackets and then simplify the remaining expression: 3(2x + 4) - 4x",
-        "answerText": "2x + 12",
-        "processText": "6x + 12 - 4x = 2x + 12"
+        "number": 10,
+        "question": "Expand the brackets and then simplify the remaining expression: 3(2x + 4) - 4x",
+        "answer_core": "2x + 12",
+        "answer_walkthrough": "Solution: 6x + 12 - 4x = 2x + 12"
+      },
+      {
+        "number": 11,
+        "question": "Simplify the expression by collecting like terms: 4c + 6c + c",
+        "answer_core": "11c",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 12,
+        "question": "Simplify the expression: 11h - 5h + 2h",
+        "answer_core": "8h",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 13,
+        "question": "Simplify the expression: 7a + 5b + 2a - 2b",
+        "answer_core": "9a + 3b",
+        "answer_walkthrough": "Solution: combine 7a + 2a and 5b - 2b"
+      },
+      {
+        "number": 14,
+        "question": "Simplify the expression: 18 - 4k + 2 - 3k",
+        "answer_core": "20 - 7k",
+        "answer_walkthrough": "Solution: combine 18 + 2 and -4k - 3k"
+      },
+      {
+        "number": 15,
+        "question": "Simplify the multiplication expression: 5 x 6y",
+        "answer_core": "30y",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 16,
+        "question": "Simplify the expression: 3m x 5n",
+        "answer_core": "15mn",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 17,
+        "question": "Simplify the expression: 6x + 9 - 10x - 12",
+        "answer_core": "-4x - 3",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 18,
+        "question": "Write a simplified algebraic expression for the perimeter of a rectangle with length 4x and width 2x + 3.",
+        "answer_core": "12x + 6",
+        "answer_walkthrough": "Solution: 4x + 4x + (2x + 3) + (2x + 3) = 12x + 6"
+      },
+      {
+        "number": 19,
+        "question": "True or False: 6m - 2m = 4. Explain your reasoning.",
+        "answer_core": "False. 6m and 2m are like terms, so they combine to 4m, not the constant 4. The variable must remain part of the term.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 20,
+        "question": "Expand the brackets and then simplify the remaining expression: 4(3x + 2) - 7x",
+        "answer_core": "5x + 8",
+        "answer_walkthrough": "Solution: 12x + 8 - 7x = 5x + 8"
       }
     ]
   },
   {
-    "weekNumber": 4,
-    "weekTitle": "FRACTIONS, DECIMALS, AND PERCENTAGES (FDP) FOUNDATIONS",
+    "id": "week_4",
+    "title": "Week 4: FRACTIONS, DECIMALS, AND PERCENTAGES (FDP) FOUNDATIONS",
     "questions": [
       {
-        "questionNumber": 1,
-        "questionText": "Reduce the fraction 24/36 to its simplest form.",
-        "answerText": "2/3",
-        "processText": "divide the numerator and denominator by their greatest common factor, 12"
+        "number": 1,
+        "question": "Reduce the fraction <span class=\"fraction\"><span class=\"numerator\">24</span><span class=\"denominator\">36</span></span> to its simplest form.",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">3</span></span>",
+        "answer_walkthrough": "Solution: divide the numerator and denominator by their greatest common factor, 12"
       },
       {
-        "questionNumber": 2,
-        "questionText": "Convert the improper fraction 17/5 into a mixed number.",
-        "answerText": "3 and 2/5",
-        "processText": ""
+        "number": 2,
+        "question": "Convert the improper fraction <span class=\"fraction\"><span class=\"numerator\">17</span><span class=\"denominator\">5</span></span> into a mixed number.",
+        "answer_core": "3<span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">5</span></span>",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 3,
-        "questionText": "Convert the mixed number 4 and 2/3 into an improper fraction.",
-        "answerText": "14/3",
-        "processText": "(4 x 3) + 2 = 14"
+        "number": 3,
+        "question": "Convert the mixed number 4<span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">3</span></span> into an improper fraction.",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">14</span><span class=\"denominator\">3</span></span>",
+        "answer_walkthrough": "Solution: (4 x 3) + 2 = 14"
       },
       {
-        "questionNumber": 4,
-        "questionText": "Convert the decimal 0.65 into a fraction simplified to its lowest terms.",
-        "answerText": "13/20",
-        "processText": "65/100 = 13/20"
+        "number": 4,
+        "question": "Convert the decimal 0.65 into a fraction simplified to its lowest terms.",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">13</span><span class=\"denominator\">20</span></span>",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">65</span><span class=\"denominator\">100</span></span> = <span class=\"fraction\"><span class=\"numerator\">13</span><span class=\"denominator\">20</span></span>"
       },
       {
-        "questionNumber": 5,
-        "questionText": "Use division to convert the fraction 5/8 into a terminating decimal.",
-        "answerText": "0.625",
-        "processText": ""
+        "number": 5,
+        "question": "Use division to convert the fraction <span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">8</span></span> into a terminating decimal.",
+        "answer_core": "0.625",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 6,
-        "questionText": "Convert 84% into both a decimal and a simplified fraction.",
-        "answerText": "Decimal: 0.84; Fraction: 21/25",
-        "processText": "84/100 = 21/25"
+        "number": 6,
+        "question": "Convert 84% into both a decimal and a simplified fraction.",
+        "answer_core": "Decimal: 0.84; Fraction: <span class=\"fraction\"><span class=\"numerator\">21</span><span class=\"denominator\">25</span></span>",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">84</span><span class=\"denominator\">100</span></span> = <span class=\"fraction\"><span class=\"numerator\">21</span><span class=\"denominator\">25</span></span>"
       },
       {
-        "questionNumber": 7,
-        "questionText": "Convert the decimal 0.015 into a percentage.",
-        "answerText": "1.5%",
-        "processText": "0.015 x 100"
+        "number": 7,
+        "question": "Convert the decimal 0.015 into a percentage.",
+        "answer_core": "1.5%",
+        "answer_walkthrough": "Solution: 0.015 x 100"
       },
       {
-        "questionNumber": 8,
-        "questionText": "Find the lowest common multiple (LCM) of the denominators to determine which fraction is larger: 3/4 or 5/7",
-        "answerText": "3/4 is larger",
-        "processText": "LCM is 28. 3/4 = 21/28 and 5/7 = 20/28. Since 21 > 20, 3/4 > 5/7"
+        "number": 8,
+        "question": "Find the lowest common multiple (LCM) of the denominators to determine which fraction is larger: <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">4</span></span> or <span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">7</span></span>",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">4</span></span> is larger",
+        "answer_walkthrough": "Solution: LCM is 28. <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">4</span></span> = <span class=\"fraction\"><span class=\"numerator\">21</span><span class=\"denominator\">28</span></span><span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">7</span></span> = <span class=\"fraction\"><span class=\"numerator\">20</span><span class=\"denominator\">28</span></span>. Since 21 > 20, <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">4</span></span> > <span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">7</span></span>"
       },
       {
-        "questionNumber": 9,
-        "questionText": "Order the following quantities from smallest to largest: 1/2, 0.45, 55%",
-        "answerText": "0.45, 1/2, 55%",
-        "processText": "converting all to decimals gives 0.45, 0.50, 0.55"
+        "number": 9,
+        "question": "Order the following quantities from smallest to largest: <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">2</span></span>, 0.45, 55%",
+        "answer_core": "0.45, <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">2</span></span>, 55%",
+        "answer_walkthrough": "Solution: converting all to decimals gives 0.45, 0.50, 0.55"
       },
       {
-        "questionNumber": 10,
-        "questionText": "If a grid features 100 equal squares and you color in exactly 75 of them, state the shaded area as a simplified fraction, a decimal, and a percentage.",
-        "answerText": "Fraction: 3/4; Decimal: 0.75; Percentage: 75%",
-        "processText": ""
+        "number": 10,
+        "question": "If a grid features 100 equal squares and you color in exactly 75 of them, state the shaded area as a simplified fraction, a decimal, and a percentage.",
+        "answer_core": "Fraction: <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">4</span></span>; Decimal: 0.75; Percentage: 75%",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 11,
+        "question": "Reduce the fraction <span class=\"fraction\"><span class=\"numerator\">18</span><span class=\"denominator\">45</span></span> to its simplest form.",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">5</span></span>",
+        "answer_walkthrough": "Solution: divide the numerator and denominator by their greatest common factor, 9"
+      },
+      {
+        "number": 12,
+        "question": "Convert the improper fraction <span class=\"fraction\"><span class=\"numerator\">23</span><span class=\"denominator\">6</span></span> into a mixed number.",
+        "answer_core": "3<span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">6</span></span>",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 13,
+        "question": "Convert the mixed number 5<span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">4</span></span> into an improper fraction.",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">23</span><span class=\"denominator\">4</span></span>",
+        "answer_walkthrough": "Solution: (5 x 4) + 3 = 23"
+      },
+      {
+        "number": 14,
+        "question": "Convert the decimal 0.35 into a fraction simplified to its lowest terms.",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">7</span><span class=\"denominator\">20</span></span>",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">35</span><span class=\"denominator\">100</span></span> = <span class=\"fraction\"><span class=\"numerator\">7</span><span class=\"denominator\">20</span></span>"
+      },
+      {
+        "number": 15,
+        "question": "Use division to convert the fraction <span class=\"fraction\"><span class=\"numerator\">7</span><span class=\"denominator\">8</span></span> into a terminating decimal.",
+        "answer_core": "0.875",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 16,
+        "question": "Convert 62% into both a decimal and a simplified fraction.",
+        "answer_core": "Decimal: 0.62; Fraction: <span class=\"fraction\"><span class=\"numerator\">31</span><span class=\"denominator\">50</span></span>",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">62</span><span class=\"denominator\">100</span></span> = <span class=\"fraction\"><span class=\"numerator\">31</span><span class=\"denominator\">50</span></span>"
+      },
+      {
+        "number": 17,
+        "question": "Convert the decimal 0.045 into a percentage.",
+        "answer_core": "4.5%",
+        "answer_walkthrough": "Solution: 0.045 x 100"
+      },
+      {
+        "number": 18,
+        "question": "Find the lowest common multiple (LCM) of the denominators to determine which fraction is larger: <span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">5</span></span> or <span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">6</span></span>",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">6</span></span> is larger",
+        "answer_walkthrough": "Solution: LCM is 30. <span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">5</span></span> = <span class=\"fraction\"><span class=\"numerator\">24</span><span class=\"denominator\">30</span></span><span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">6</span></span> = <span class=\"fraction\"><span class=\"numerator\">25</span><span class=\"denominator\">30</span></span>. Since 25 > 24, <span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">6</span></span> > <span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">5</span></span>"
+      },
+      {
+        "number": 19,
+        "question": "Order the following quantities from smallest to largest: <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">4</span></span>, 0.3, 15%",
+        "answer_core": "15%, <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">4</span></span>, 0.3",
+        "answer_walkthrough": "Solution: converting all to decimals gives 0.15, 0.25, 0.30"
+      },
+      {
+        "number": 20,
+        "question": "If a container holds 100 blocks and exactly 40 of them are blue, state the blue blocks as a simplified fraction, a decimal, and a percentage.",
+        "answer_core": "Fraction: <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">5</span></span>; Decimal: 0.4; Percentage: 40%",
+        "answer_walkthrough": ""
       }
     ]
   },
   {
-    "weekNumber": 5,
-    "weekTitle": "OPERATIONS WITH FRACTIONS AND FINDING QUANTITIES",
+    "id": "week_5",
+    "title": "Week 5: OPERATIONS WITH FRACTIONS AND FINDING QUANTITIES",
     "questions": [
       {
-        "questionNumber": 1,
-        "questionText": "Convert these values into fractions with equal denominators to arrange them from least to greatest: 2/5, 0.35, 50%",
-        "answerText": "0.35, 2/5, 50%",
-        "processText": "written with a common denominator of 20, they are 7/20, 8/20, 10/20"
+        "number": 1,
+        "question": "Convert these values into fractions with equal denominators to arrange them from least to greatest: <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">5</span></span>, 0.35, 50%",
+        "answer_core": "0.35, <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">5</span></span>, 50%",
+        "answer_walkthrough": "Solution: written with a common denominator of 20, they are <span class=\"fraction\"><span class=\"numerator\">7</span><span class=\"denominator\">20</span></span>, <span class=\"fraction\"><span class=\"numerator\">8</span><span class=\"denominator\">20</span></span>, <span class=\"fraction\"><span class=\"numerator\">10</span><span class=\"denominator\">20</span></span>"
       },
       {
-        "questionNumber": 2,
-        "questionText": "Solve and simplify: 1/3 + 2/5",
-        "answerText": "11/15",
-        "processText": "find a common denominator of 15; 5/15 + 6/15 = 11/15"
+        "number": 2,
+        "question": "Solve and simplify: <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">3</span></span> + <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">5</span></span>",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">11</span><span class=\"denominator\">15</span></span>",
+        "answer_walkthrough": "Solution: find a common denominator of 15; <span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">15</span></span> + <span class=\"fraction\"><span class=\"numerator\">6</span><span class=\"denominator\">15</span></span> = <span class=\"fraction\"><span class=\"numerator\">11</span><span class=\"denominator\">15</span></span>"
       },
       {
-        "questionNumber": 3,
-        "questionText": "Solve and simplify: 7/8 - 1/4",
-        "answerText": "5/8",
-        "processText": "7/8 - 2/8 = 5/8"
+        "number": 3,
+        "question": "Solve and simplify: <span class=\"fraction\"><span class=\"numerator\">7</span><span class=\"denominator\">8</span></span> - <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">4</span></span>",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">8</span></span>",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">7</span><span class=\"denominator\">8</span></span> - <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">8</span></span> = <span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">8</span></span>"
       },
       {
-        "questionNumber": 4,
-        "questionText": "Solve and express your answer as a mixed number: 1 and 1/3 + 5/6",
-        "answerText": "2 and 1/6",
-        "processText": "4/3 + 5/6 = 8/6 + 5/6 = 13/6 = 2 and 1/6"
+        "number": 4,
+        "question": "Solve and express your answer as a mixed number: 1<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">3</span></span> + <span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">6</span></span>",
+        "answer_core": "2<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">6</span></span>",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">3</span></span> + <span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">6</span></span> = <span class=\"fraction\"><span class=\"numerator\">8</span><span class=\"denominator\">6</span></span> + <span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">6</span></span> = <span class=\"fraction\"><span class=\"numerator\">13</span><span class=\"denominator\">6</span></span> = 2<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">6</span></span>"
       },
       {
-        "questionNumber": 5,
-        "questionText": "Calculate 3/5 of 45 without using a calculator.",
-        "answerText": "27",
-        "processText": "divide by the denominator first: 45 / 5 = 9; then multiply by the numerator: 9 x 3 = 27"
+        "number": 5,
+        "question": "Calculate <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">5</span></span> of 45 without using a calculator.",
+        "answer_core": "27",
+        "answer_walkthrough": "Solution: divide by the denominator first: 45 &divide; 5 = 9; then multiply by the numerator: 9 x 3 = 27"
       },
       {
-        "questionNumber": 6,
-        "questionText": "Calculate the value of the top-heavy fraction: 5/4 of 32",
-        "answerText": "40",
-        "processText": "32 / 4 = 8; 8 x 5 = 40"
+        "number": 6,
+        "question": "Calculate the value of the top-heavy fraction: <span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">4</span></span> of 32",
+        "answer_core": "40",
+        "answer_walkthrough": "Solution: 32 &divide; 4 = 8; 8 x 5 = 40"
       },
       {
-        "questionNumber": 7,
-        "questionText": "Find 25% of $120.",
-        "answerText": "$30",
-        "processText": "25% = 1/4, so $120 / 4 = $30"
+        "number": 7,
+        "question": "Find 25% of $120.",
+        "answer_core": "$30",
+        "answer_walkthrough": "Solution: 25% = <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">4</span></span>, so $120 &divide; 4 = $30"
       },
       {
-        "questionNumber": 8,
-        "questionText": "Find 70% of 200 meters.",
-        "answerText": "140 meters",
-        "processText": "10% of 200 = 20, so 20 x 7 = 140"
+        "number": 8,
+        "question": "Find 70% of 200 meters.",
+        "answer_core": "140 meters",
+        "answer_walkthrough": "Solution: 10% of 200 = 20, so 20 x 7 = 140"
       },
       {
-        "questionNumber": 9,
-        "questionText": "A baking recipe requires 2/3 of a cup of sugar. If you triple the recipe, how many cups of sugar will you need in total?",
-        "answerText": "2 cups",
-        "processText": "2/3 x 3 = 6/3 = 2"
+        "number": 9,
+        "question": "A baking recipe requires <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">3</span></span> of a cup of sugar. If you triple the recipe, how many cups of sugar will you need in total?",
+        "answer_core": "2 cups",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">3</span></span> x 3 = <span class=\"fraction\"><span class=\"numerator\">6</span><span class=\"denominator\">3</span></span> = 2"
       },
       {
-        "questionNumber": 10,
-        "questionText": "A physical education class has 30 students. If 20% of the students are left-handed, how many students are right-handed?",
-        "answerText": "24 students",
-        "processText": "20% of 30 = 6 left-handed students. Therefore, 30 - 6 = 24 right-handed students"
+        "number": 10,
+        "question": "A physical education class has 30 students. If 20% of the students are left-handed, how many students are right-handed?",
+        "answer_core": "24 students",
+        "answer_walkthrough": "Solution: 20% of 30 = 6 left-handed students. Therefore, 30 - 6 = 24 right-handed students"
+      },
+      {
+        "number": 11,
+        "question": "Convert these values into fractions with equal denominators to arrange them from least to greatest: <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">5</span></span>, 0.45, 25%",
+        "answer_core": "25%, 0.45, <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">5</span></span>",
+        "answer_walkthrough": "Solution: written with a common denominator of 20, they are <span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">20</span></span>, <span class=\"fraction\"><span class=\"numerator\">9</span><span class=\"denominator\">20</span></span>, <span class=\"fraction\"><span class=\"numerator\">12</span><span class=\"denominator\">20</span></span>"
+      },
+      {
+        "number": 12,
+        "question": "Solve and simplify: <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">4</span></span> + <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">3</span></span>",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">11</span><span class=\"denominator\">12</span></span>",
+        "answer_walkthrough": "Solution: find a common denominator of 12; <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">12</span></span> + <span class=\"fraction\"><span class=\"numerator\">8</span><span class=\"denominator\">12</span></span> = <span class=\"fraction\"><span class=\"numerator\">11</span><span class=\"denominator\">12</span></span>"
+      },
+      {
+        "number": 13,
+        "question": "Solve and simplify: <span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">6</span></span> - <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">3</span></span>",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">2</span></span>",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">5</span><span class=\"denominator\">6</span></span> - <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">6</span></span> = <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">6</span></span> = <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">2</span></span>"
+      },
+      {
+        "number": 14,
+        "question": "Solve and express your answer as a mixed number: 1<span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">5</span></span> + <span class=\"fraction\"><span class=\"numerator\">7</span><span class=\"denominator\">10</span></span>",
+        "answer_core": "2<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">10</span></span>",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">7</span><span class=\"denominator\">5</span></span> + <span class=\"fraction\"><span class=\"numerator\">7</span><span class=\"denominator\">10</span></span> = <span class=\"fraction\"><span class=\"numerator\">14</span><span class=\"denominator\">10</span></span> + <span class=\"fraction\"><span class=\"numerator\">7</span><span class=\"denominator\">10</span></span> = <span class=\"fraction\"><span class=\"numerator\">21</span><span class=\"denominator\">10</span></span> = 2<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">10</span></span>"
+      },
+      {
+        "number": 15,
+        "question": "Calculate <span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">7</span></span> of 56 without using a calculator.",
+        "answer_core": "32",
+        "answer_walkthrough": "Solution: divide by the denominator first: 56 &divide; 7 = 8; then multiply by the numerator: 8 x 4 = 32"
+      },
+      {
+        "number": 16,
+        "question": "Calculate the value of the top-heavy fraction: <span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">3</span></span> of 27",
+        "answer_core": "36",
+        "answer_walkthrough": "Solution: 27 &divide; 3 = 9; 9 x 4 = 36"
+      },
+      {
+        "number": 17,
+        "question": "Find 75% of $160.",
+        "answer_core": "$120",
+        "answer_walkthrough": "Solution: 75% = <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">4</span></span>, so ($160 &divide; 4) x 3 = $120"
+      },
+      {
+        "number": 18,
+        "question": "Find 60% of 300 meters.",
+        "answer_core": "180 meters",
+        "answer_walkthrough": "Solution: 10% of 300 = 30, so 30 x 6 = 180"
+      },
+      {
+        "number": 19,
+        "question": "A drink recipe requires <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">4</span></span> of a cup of juice. If you double the recipe, how many cups of juice will you need in total?",
+        "answer_core": "1<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">2</span></span> cups",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">4</span></span> x 2 = <span class=\"fraction\"><span class=\"numerator\">6</span><span class=\"denominator\">4</span></span> = <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">2</span></span> = 1<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">2</span></span>"
+      },
+      {
+        "number": 20,
+        "question": "A school track team has 40 runners. If 15% of the runners are sprinters, how many team members are long-distance runners?",
+        "answer_core": "34 runners",
+        "answer_walkthrough": "Solution: 15% of 40 = 6 sprinters. Therefore, 40 - 6 = 34 long-distance runners"
       }
     ]
   },
   {
-    "weekNumber": 6,
-    "weekTitle": "ADVANCED FRACTIONS AND PERCENTAGES",
+    "id": "week_6",
+    "title": "Week 6: ADVANCED FRACTIONS AND PERCENTAGES",
     "questions": [
       {
-        "questionNumber": 1,
-        "questionText": "If 1/4 of a mystery number is 12, what is the whole number?",
-        "answerText": "48",
-        "processText": "12 x 4 = 48"
+        "number": 1,
+        "question": "If <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">4</span></span> of a mystery number is 12, what is the whole number?",
+        "answer_core": "48",
+        "answer_walkthrough": "Solution: 12 x 4 = 48"
       },
       {
-        "questionNumber": 2,
-        "questionText": "If 2/3 of a bag of marbles equals 16 marbles, how many total marbles are inside the bag?",
-        "answerText": "24 marbles",
-        "processText": "if 2 parts = 16, then 1 part = 8. Total value for 3 parts: 8 x 3 = 24"
+        "number": 2,
+        "question": "If <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">3</span></span> of a bag of marbles equals 16 marbles, how many total marbles are inside the bag?",
+        "answer_core": "24 marbles",
+        "answer_walkthrough": "Solution: if 2 parts = 16, then 1 part = 8. Total value for 3 parts: 8 x 3 = 24"
       },
       {
-        "questionNumber": 3,
-        "questionText": "Find the whole (100%) amount if you know that 40% of it is 28.",
-        "answerText": "70",
-        "processText": "if 40% = 28, then 10% = 7. Thus, 100% = 7 x 10 = 70"
+        "number": 3,
+        "question": "Find the whole (100%) amount if you know that 40% of it is 28.",
+        "answer_core": "70",
+        "answer_walkthrough": "Solution: if 40% = 28, then 10% = 7. Thus, 100% = 7 x 10 = 70"
       },
       {
-        "questionNumber": 4,
-        "questionText": "You spend $45 on a new jacket, which represents exactly 15% of your original savings account balance. How much money did you have saved initially?",
-        "answerText": "$300",
-        "processText": "$45 / 0.15 = $300"
+        "number": 4,
+        "question": "You spend $45 on a new jacket, which represents exactly 15% of your original savings account balance. How much money did you have saved initially?",
+        "answer_core": "$300",
+        "answer_walkthrough": "Solution: $45 &divide; 0.15 = $300"
       },
       {
-        "questionNumber": 5,
-        "questionText": "Multiply the whole number by the fraction and write the answer in its simplest form: 6 x 3/5",
-        "answerText": "3 and 3/5 (or 18/5)",
-        "processText": ""
+        "number": 5,
+        "question": "Multiply the whole number by the fraction and write the answer in its simplest form: 6 x <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">5</span></span>",
+        "answer_core": "3<span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">5</span></span>",
+        "answer_walkthrough": "Alternative: <span class=\"fraction\"><span class=\"numerator\">18</span><span class=\"denominator\">5</span></span>"
       },
       {
-        "questionNumber": 6,
-        "questionText": "Multiply the values and simplify your answer: 10 x 3/4",
-        "answerText": "7 and 1/2 (or 15/2)",
-        "processText": "30/4 = 15/2 = 7 and 1/2"
+        "number": 6,
+        "question": "Multiply the values and simplify your answer: 10 x <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">4</span></span>",
+        "answer_core": "7<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">2</span></span>",
+        "answer_walkthrough": "Alternative: <span class=\"fraction\"><span class=\"numerator\">15</span><span class=\"denominator\">2</span></span>) (Process: <span class=\"fraction\"><span class=\"numerator\">30</span><span class=\"denominator\">4</span></span> = <span class=\"fraction\"><span class=\"numerator\">15</span><span class=\"denominator\">2</span></span> = 7<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">2</span></span>"
       },
       {
-        "questionNumber": 7,
-        "questionText": "Divide the fraction by the whole number, giving the simplest form: (1/3) / 4",
-        "answerText": "1/12",
-        "processText": "1 / (3 x 4) = 1/12"
+        "number": 7,
+        "question": "Divide the fraction by the whole number, giving the simplest form: (<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">3</span></span>) &divide; 4",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">12</span></span>",
+        "answer_walkthrough": "Solution: 1 &divide; (3 x 4) = <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">12</span></span>"
       },
       {
-        "questionNumber": 8,
-        "questionText": "Divide the fraction by the whole number and simplify: (6/7) / 2",
-        "answerText": "3/7",
-        "processText": "6/14 = 3/7"
+        "number": 8,
+        "question": "Divide the fraction by the whole number and simplify: (<span class=\"fraction\"><span class=\"numerator\">6</span><span class=\"denominator\">7</span></span>) &divide; 2",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">7</span></span>",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">6</span><span class=\"denominator\">14</span></span> = <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">7</span></span>"
       },
       {
-        "questionNumber": 9,
-        "questionText": "Divide the whole number by the unit fraction: 5 / (1/3)",
-        "answerText": "15",
-        "processText": "5 x 3 = 15"
+        "number": 9,
+        "question": "Divide the whole number by the unit fraction: 5 &divide; (<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">3</span></span>)",
+        "answer_core": "15",
+        "answer_walkthrough": "Solution: 5 x 3 = 15"
       },
       {
-        "questionNumber": 10,
-        "questionText": "A juice container holding 4/5 of a liter of juice is split evenly among 4 children. How much juice does each child receive?",
-        "answerText": "1/5 of a liter",
-        "processText": "4/5 / 4 = 1/5"
+        "number": 10,
+        "question": "A juice container holding <span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">5</span></span> of a liter of juice is split evenly among 4 children. How much juice does each child receive?",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">5</span></span> of a liter",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">5</span></span> &divide; 4 = <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">5</span></span>"
+      },
+      {
+        "number": 11,
+        "question": "If <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">5</span></span> of a mystery number is 14, what is the whole number?",
+        "answer_core": "70",
+        "answer_walkthrough": "Solution: 14 x 5 = 70"
+      },
+      {
+        "number": 12,
+        "question": "If <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">4</span></span> of a crate of apples equals 24 apples, how many total apples are inside the crate?",
+        "answer_core": "32 apples",
+        "answer_walkthrough": "Solution: if 3 parts = 24, then 1 part = 8. Total value for 4 parts: 8 x 4 = 32"
+      },
+      {
+        "number": 13,
+        "question": "Find the whole (100%) amount if you know that 30% of it is 21.",
+        "answer_core": "70",
+        "answer_walkthrough": "Solution: if 30% = 21, then 10% = 7. Thus, 100% = 7 x 10 = 70"
+      },
+      {
+        "number": 14,
+        "question": "You spend $60 on a concert ticket, which represents exactly 20% of your original savings account balance. How much money did you have saved initially?",
+        "answer_core": "$300",
+        "answer_walkthrough": "Solution: $60 &divide; 0.20 = $300"
+      },
+      {
+        "number": 15,
+        "question": "Multiply the whole number by the fraction and write the answer in its simplest form: 8 x <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">3</span></span>",
+        "answer_core": "5<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">3</span></span>",
+        "answer_walkthrough": "Alternative: <span class=\"fraction\"><span class=\"numerator\">16</span><span class=\"denominator\">3</span></span>"
+      },
+      {
+        "number": 16,
+        "question": "Multiply the values and simplify your answer: 12 x <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">5</span></span>",
+        "answer_core": "4<span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">5</span></span>",
+        "answer_walkthrough": "Alternative: <span class=\"fraction\"><span class=\"numerator\">24</span><span class=\"denominator\">5</span></span>) (Process: <span class=\"fraction\"><span class=\"numerator\">24</span><span class=\"denominator\">5</span></span> = 4<span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">5</span></span>"
+      },
+      {
+        "number": 17,
+        "question": "Divide the fraction by the whole number, giving the simplest form: (<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">4</span></span>) &divide; 5",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">20</span></span>",
+        "answer_walkthrough": "Solution: 1 &divide; (4 x 5) = <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">20</span></span>"
+      },
+      {
+        "number": 18,
+        "question": "Divide the fraction by the whole number and simplify: (<span class=\"fraction\"><span class=\"numerator\">8</span><span class=\"denominator\">9</span></span>) &divide; 2",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">9</span></span>",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">8</span><span class=\"denominator\">18</span></span> = <span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">9</span></span>"
+      },
+      {
+        "number": 19,
+        "question": "Divide the whole number by the unit fraction: 6 &divide; (<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">4</span></span>)",
+        "answer_core": "24",
+        "answer_walkthrough": "Solution: 6 x 4 = 24"
+      },
+      {
+        "number": 20,
+        "question": "A length of ribbon measuring <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">5</span></span> of a meter is cut evenly into 3 smaller pieces. How long is each piece of ribbon?",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">5</span></span> of a meter",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">5</span></span> &divide; 3 = <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">5</span></span>"
       }
     ]
   },
   {
-    "weekNumber": 7,
-    "weekTitle": "INTRODUCTION TO PROBABILITY",
+    "id": "week_7",
+    "title": "Week 7: INTRODUCTION TO PROBABILITY",
     "questions": [
       {
-        "questionNumber": 1,
-        "questionText": "List the descriptions used on a standard probability scale from 0 to 1 and their corresponding values.",
-        "answerText": "0 = Impossible, 0.25 = Unlikely, 0.5 = Even Chance, 0.75 = Likely, 1 = Certain",
-        "processText": ""
+        "number": 1,
+        "question": "List the descriptions used on a standard probability scale from 0 to 1 and their corresponding values.",
+        "answer_core": "0 = Impossible, 0.25 = Unlikely, 0.5 = Even Chance, 0.75 = Likely, 1 = Certain",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 2,
-        "questionText": "A standard 6-sided die is rolled. List the complete sample space of all possible outcomes.",
-        "answerText": "1, 2, 3, 4, 5, 6",
-        "processText": ""
+        "number": 2,
+        "question": "A standard 6-sided die is rolled. List the complete sample space of all possible outcomes.",
+        "answer_core": "1, 2, 3, 4, 5, 6",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 3,
-        "questionText": "What is the theoretical probability of rolling an odd number on a standard 6-sided die? Express your answer as a simplified fraction.",
-        "answerText": "1/2",
-        "processText": "the 3 odd numbers are 1, 3, and 5 out of 6 total options, yielding 3/6 = 1/2"
+        "number": 3,
+        "question": "What is the theoretical probability of rolling an odd number on a standard 6-sided die? Express your answer as a simplified fraction.",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">2</span></span>",
+        "answer_walkthrough": "Solution: the 3 odd numbers are 1, 3, and 5 out of 6 total options, yielding <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">6</span></span> = <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">2</span></span>"
       },
       {
-        "questionNumber": 4,
-        "questionText": "A bag contains 5 red marbles, 3 blue marbles, and 4 green marbles. How many total possible outcomes are there when selecting a single marble?",
-        "answerText": "12 outcomes",
-        "processText": "5 + 3 + 4 = 12"
+        "number": 4,
+        "question": "A bag contains 5 red marbles, 3 blue marbles, and 4 green marbles. How many total possible outcomes are there when selecting a single marble?",
+        "answer_core": "12 outcomes",
+        "answer_walkthrough": "Solution: 5 + 3 + 4 = 12"
       },
       {
-        "questionNumber": 5,
-        "questionText": "Using the marble bag from Problem 4, what is the theoretical probability of selecting a blue marble?",
-        "answerText": "1/4",
-        "processText": "3/12 = 1/4"
+        "number": 5,
+        "question": "Using the marble bag from Problem 4, what is the theoretical probability of selecting a blue marble?",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">4</span></span>",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">12</span></span> = <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">4</span></span>"
       },
       {
-        "questionNumber": 6,
-        "questionText": "Using the marble bag from Problem 4, find the probability of randomly choosing a marble that is not red.",
-        "answerText": "7/12",
-        "processText": "there are 3 blue + 4 green = 7 non-red marbles"
+        "number": 6,
+        "question": "Using the marble bag from Problem 4, find the probability of randomly choosing a marble that is not red.",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">7</span><span class=\"denominator\">12</span></span>",
+        "answer_walkthrough": "Solution: there are 3 blue + 4 green = 7 non-red marbles"
       },
       {
-        "questionNumber": 7,
-        "questionText": "A coin is flipped 40 times during a classroom experiment. It lands on heads exactly 22 times. What is the experimental probability of landing on heads?",
-        "answerText": "11/20 (or 0.55)",
-        "processText": "22/40 = 11/20"
+        "number": 7,
+        "question": "A coin is flipped 40 times during a classroom experiment. It lands on heads exactly 22 times. What is the experimental probability of landing on heads?",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">11</span><span class=\"denominator\">20</span></span>",
+        "answer_walkthrough": "Alternative: 0.55) (Process: <span class=\"fraction\"><span class=\"numerator\">22</span><span class=\"denominator\">40</span></span> = <span class=\"fraction\"><span class=\"numerator\">11</span><span class=\"denominator\">20</span></span>"
       },
       {
-        "questionNumber": 8,
-        "questionText": "Explain the conceptual difference between theoretical probability and experimental probability.",
-        "answerText": "Theoretical probability is what is mathematically expected to happen based on ideal conditions. Experimental probability is the actual rate an event occurs during real-world trials.",
-        "processText": ""
+        "number": 8,
+        "question": "Explain the conceptual difference between theoretical probability and experimental probability.",
+        "answer_core": "Theoretical probability is what is mathematically expected to happen based on ideal conditions. Experimental probability is the actual rate an event occurs during real-world trials.",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 9,
-        "questionText": "A spinner is divided into 8 equal sections numbered 1 through 8. What is the probability of landing on a value strictly greater than 5?",
-        "answerText": "3/8",
-        "processText": "the valid outcomes are 6, 7, and 8, which is 3 outcomes out of 8"
+        "number": 9,
+        "question": "A spinner is divided into 8 equal sections numbered 1 through 8. What is the probability of landing on a value strictly greater than 5?",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">8</span></span>",
+        "answer_walkthrough": "Solution: the valid outcomes are 6, 7, and 8, which is 3 outcomes out of 8"
       },
       {
-        "questionNumber": 10,
-        "questionText": "If the calculated probability of a thunderstorm occurring tomorrow is 0.27, what is the probability that it will not storm tomorrow?",
-        "answerText": "0.73",
-        "processText": "1 - 0.27 = 0.73"
+        "number": 10,
+        "question": "If the calculated probability of a thunderstorm occurring tomorrow is 0.27, what is the probability that it will not storm tomorrow?",
+        "answer_core": "0.73",
+        "answer_walkthrough": "Solution: 1 - 0.27 = 0.73"
+      },
+      {
+        "number": 11,
+        "question": "On a standard probability scale from 0 to 1, what word best describes an event with a value of exactly 0? What about exactly 1?",
+        "answer_core": "0 = Impossible, 1 = Certain",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 12,
+        "question": "A standard card is drawn from a pile containing one card of each suit (Hearts, Diamonds, Clubs, Spades). List the complete sample space of outcomes.",
+        "answer_core": "Hearts, Diamonds, Clubs, Spades",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 13,
+        "question": "What is the theoretical probability of rolling a multiple of 3 on a standard 6-sided die? Express your answer as a simplified fraction.",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">3</span></span>",
+        "answer_walkthrough": "Solution: the multiples of 3 on a die are 3 and 6, which means 2 out of 6 total options, yielding <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">6</span></span> = <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">3</span></span>"
+      },
+      {
+        "number": 14,
+        "question": "A drawer contains 6 black socks, 4 white socks, and 4 grey socks. How many total possible outcomes are there when selecting a single sock at random?",
+        "answer_core": "14 outcomes",
+        "answer_walkthrough": "Solution: 6 + 4 + 4 = 14"
+      },
+      {
+        "number": 15,
+        "question": "Using the sock drawer from Problem 14, what is the theoretical probability of selecting a white sock?",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">7</span></span>",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">14</span></span> = <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">7</span></span>"
+      },
+      {
+        "number": 16,
+        "question": "Using the sock drawer from Problem 14, find the probability of randomly choosing a sock that is not black.",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">7</span></span>",
+        "answer_walkthrough": "Solution: there are 4 white + 4 grey = 8 non-black socks out of 14, yielding <span class=\"fraction\"><span class=\"numerator\">8</span><span class=\"denominator\">14</span></span> = <span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">7</span></span>"
+      },
+      {
+        "number": 17,
+        "question": "A game spinner is spun 50 times during a lunchtime club activity. It lands on the prize segment exactly 15 times. What is the experimental probability of winning a prize?",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">10</span></span>",
+        "answer_walkthrough": "Alternative: 0.3) (Process: <span class=\"fraction\"><span class=\"numerator\">15</span><span class=\"denominator\">50</span></span> = <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">10</span></span>"
+      },
+      {
+        "number": 18,
+        "question": "If you roll a standard die once, you calculate a <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">6</span></span> chance of rolling a 4. Is this an example of theoretical or experimental probability? Why?",
+        "answer_core": "Theoretical probability, because it is based on mathematical analysis of ideal, balanced outcomes rather than tracking real-world trial records.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 19,
+        "question": "A spinner is divided into 10 equal sections numbered 1 through 10. What is the probability of landing on a prime number?",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">5</span></span>",
+        "answer_walkthrough": "Solution: the prime numbers are 2, 3, 5, and 7, which is 4 outcomes out of 10, yielding <span class=\"fraction\"><span class=\"numerator\">4</span><span class=\"denominator\">10</span></span> = <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">5</span></span>"
+      },
+      {
+        "number": 20,
+        "question": "If the calculated probability of a student winning a raffle prize is 0.08, what is the probability that they will not win a prize?",
+        "answer_core": "0.92",
+        "answer_walkthrough": "Solution: 1 - 0.08 = 0.92"
       }
     ]
   },
   {
-    "weekNumber": 8,
-    "weekTitle": "PROBABILITY TOOLS AND APPLICATIONS",
+    "id": "week_8",
+    "title": "Week 8: PROBABILITY TOOLS AND APPLICATIONS",
     "questions": [
       {
-        "questionNumber": 1,
-        "questionText": "You roll a standard 6-sided die and flip a fair coin at the same time. List all possible combined outcomes as a sample space.",
-        "answerText": "H1, H2, H3, H4, H5, H6, T1, T2, T3, T4, T5, T6 (where H is Heads and T is Tails)",
-        "processText": ""
+        "number": 1,
+        "question": "You roll a standard 6-sided die and flip a fair coin at the same time. List all possible combined outcomes as a sample space.",
+        "answer_core": "H1, H2, H3, H4, H5, H6, T1, T2, T3, T4, T5, T6",
+        "answer_walkthrough": "Note: where H is Heads and T is Tails"
       },
       {
-        "questionNumber": 2,
-        "questionText": "Based on your sample space from Problem 1, how many total combined outcomes exist?",
-        "answerText": "12 combined outcomes",
-        "processText": "2 x 6 = 12"
+        "number": 2,
+        "question": "Based on your sample space from Problem 1, how many total combined outcomes exist?",
+        "answer_core": "12 combined outcomes",
+        "answer_walkthrough": "Solution: 2 x 6 = 12"
       },
       {
-        "questionNumber": 3,
-        "questionText": "What is the theoretical probability of rolling a number less than 3 and flipping tails?",
-        "answerText": "1/6",
-        "processText": "matching outcomes are T1 and T2, which means 2/12 = 1/6"
+        "number": 3,
+        "question": "What is the theoretical probability of rolling a number less than 3 and flipping tails?",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">6</span></span>",
+        "answer_walkthrough": "Solution: matching outcomes are T1 and T2, which means <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">12</span></span> = <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">6</span></span>"
       },
       {
-        "questionNumber": 4,
-        "questionText": "A game spinner has 4 equal sections: Red, Yellow, Blue, and Green. You spin it 50 times and it lands on Blue 18 times. Calculate the experimental probability of landing on Blue.",
-        "answerText": "9/25 (or 0.36)",
-        "processText": "18/50 = 9/25"
+        "number": 4,
+        "question": "A game spinner has 4 equal sections: Red, Yellow, Blue, and Green. You spin it 50 times and it lands on Blue 18 times. Calculate the experimental probability of landing on Blue.",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">9</span><span class=\"denominator\">25</span></span>",
+        "answer_walkthrough": "Alternative: 0.36) (Process: <span class=\"fraction\"><span class=\"numerator\">18</span><span class=\"denominator\">50</span></span> = <span class=\"fraction\"><span class=\"numerator\">9</span><span class=\"denominator\">25</span></span>"
       },
       {
-        "questionNumber": 5,
-        "questionText": "The theoretical probability of landing on Blue in Problem 4 is 25% (0.25). Why does your real-world experimental result differ from this math baseline?",
-        "answerText": "Small sample sizes are heavily influenced by short-term random variations and chance, causing experimental results to fluctuate away from theoretical expectations.",
-        "processText": ""
+        "number": 5,
+        "question": "The theoretical probability of landing on Blue in Problem 4 is 25% (0.25). Why does your real-world experimental result differ from this math baseline?",
+        "answer_core": "Small sample sizes are heavily influenced by short-term random variations and chance, causing experimental results to fluctuate away from theoretical expectations.",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 6,
-        "questionText": "If you run the experiment in Problem 4 for 10,000 spins instead of 50, what should happen to the experimental probability of landing on Blue?",
-        "answerText": "According to the Law of Large Numbers, the experimental probability will stabilize and move closer to the true theoretical probability of 0.25 (25%).",
-        "processText": ""
+        "number": 6,
+        "question": "If you run the experiment in Problem 4 for 10,000 spins instead of 50, what should happen to the experimental probability of landing on Blue?",
+        "answer_core": "According to the Law of Large Numbers, the experimental probability will stabilize and move closer to the true theoretical probability of 0.25 (25%).",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 7,
-        "questionText": "Briefly outline the structural steps (Plan, Doing, Calculating) required to investigate whether a coin is fair or biased.",
-        "answerText": "Plan: Decide to flip the coin a large number of times (e.g., 200 times) and record the results. Doing: Conduct the flips physically under consistent conditions. Calculating: Divide total heads by 200 to find the experimental probability and check how close it is to 0.5.",
-        "processText": ""
+        "number": 7,
+        "question": "Briefly outline the structural steps (Plan, Doing, Calculating) required to investigate whether a coin is fair or biased.",
+        "answer_core": "Plan: Decide to flip the coin a large number of times (e.g., 200 times) and record the results. Doing: Conduct the flips physically under consistent conditions. Calculating: Divide total heads by 200 to find the experimental probability and check how close it is to 0.5.",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 8,
-        "questionText": "Two fair coins are tossed at the same time. What is the theoretical probability of getting exactly one Head and one Tail?",
-        "answerText": "1/2 (or 0.5)",
-        "processText": "sample space is HH, HT, TH, TT. Two out of four outcomes match, so 2/4 = 1/2"
+        "number": 8,
+        "question": "Two fair coins are tossed at the same time. What is the theoretical probability of getting exactly one Head and one Tail?",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">2</span></span>",
+        "answer_walkthrough": "Alternative: 0.5) (Process: sample space is HH, HT, TH, TT. Two out of four outcomes match, so <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">4</span></span> = <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">2</span></span>"
       },
       {
-        "questionNumber": 9,
-        "questionText": "If you roll a standard 6-sided die 180 times, how many times would you expect to roll a 6?",
-        "answerText": "30 times",
-        "processText": "1/6 x 180 = 30"
+        "number": 9,
+        "question": "If you roll a standard 6-sided die 180 times, how many times would you expect to roll a 6?",
+        "answer_core": "30 times",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">6</span></span> x 180 = 30"
       },
       {
-        "questionNumber": 10,
-        "questionText": "A container holds red and white plastic counters. The probability of randomly pulling out a red counter is 3/8. If there are 24 total counters, how many are red?",
-        "answerText": "9 red counters",
-        "processText": "3/8 x 24 = 9"
+        "number": 10,
+        "question": "A container holds red and white plastic counters. The probability of randomly pulling out a red counter is <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">8</span></span>. If there are 24 total counters, how many are red?",
+        "answer_core": "9 red counters",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">8</span></span> x 24 = 9"
+      },
+      {
+        "number": 11,
+        "question": "You flip a fair coin and spin a spinner with 3 equal sections (Red, Blue, Green) at the same time. List all possible combined outcomes as a sample space.",
+        "answer_core": "HR, HB, HG, TR, TB, TG",
+        "answer_walkthrough": "Note: where H is Heads and T is Tails"
+      },
+      {
+        "number": 12,
+        "question": "Based on your sample space from Problem 11, how many total combined outcomes exist?",
+        "answer_core": "6 combined outcomes",
+        "answer_walkthrough": "Solution: 2 x 3 = 6"
+      },
+      {
+        "number": 13,
+        "question": "What is the theoretical probability of flipping heads and landing on Green in the experiment described in Problem 11?",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">6</span></span>",
+        "answer_walkthrough": "Solution: only 1 outcome, HG, matches out of 6 total possibilities"
+      },
+      {
+        "number": 14,
+        "question": "A standard 6-sided die is rolled 60 times during a math class activity. It lands on a \"5\" exactly 14 times. Calculate the experimental probability of rolling a 5.",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">7</span><span class=\"denominator\">30</span></span>",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">14</span><span class=\"denominator\">60</span></span> = <span class=\"fraction\"><span class=\"numerator\">7</span><span class=\"denominator\">30</span></span>"
+      },
+      {
+        "number": 15,
+        "question": "The theoretical probability of rolling a 5 is <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">6</span></span> (or roughly 10 out of 60 trials). Why might a student roll a 5 exactly 14 times instead of 10?",
+        "answer_core": "Real-world random trials are prone to short-term variations and chance; small sample sizes like 60 trials rarely match theoretical expectations perfectly.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 16,
+        "question": "If the class pools their data together so they look at 6,000 combined die rolls instead of 60, what should happen to the experimental probability of rolling a 5?",
+        "answer_core": "According to the Law of Large Numbers, the pooled experimental probability will level out and move much closer to the true theoretical probability of <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">6</span></span> (16.7%).",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 17,
+        "question": "You want to find out if a standard 6-sided die is weighted/unfair. Briefly outline the structural steps (Plan, Doing, Calculating) required to investigate this.",
+        "answer_core": "Plan: Decide to roll the die 300 times and log how often each face lands up. Doing: Shake and roll the die consistently, recording every single output. Calculating: Compute the experimental probability for each number (e.g., total 6s divided by 300) and check if any numbers deviate significantly from the expected <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">6</span></span> baseline.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 18,
+        "question": "Two fair coins are tossed at the same time. What is the theoretical probability of getting two matching faces (either both Heads or both Tails)?",
+        "answer_core": "<span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">2</span></span>",
+        "answer_walkthrough": "Alternative: 0.5) (Process: sample space is HH, HT, TH, TT. The matching outcomes are HH and TT, which means <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">4</span></span> = <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">2</span></span>"
+      },
+      {
+        "number": 19,
+        "question": "If you spin a 4-section spinner (equal sizes) 240 times, how many times would you expect it to land on the first section?",
+        "answer_core": "60 times",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">1</span><span class=\"denominator\">4</span></span> x 240 = 60"
+      },
+      {
+        "number": 20,
+        "question": "A box contains blue and yellow plastic tokens. The probability of pulling a blue token is <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">5</span></span>. If there are 35 total tokens, how many are blue?",
+        "answer_core": "14 blue tokens",
+        "answer_walkthrough": "Solution: <span class=\"fraction\"><span class=\"numerator\">2</span><span class=\"denominator\">5</span></span> x 35 = 14"
       }
     ]
   },
   {
-    "weekNumber": 9,
-    "weekTitle": "STATISTICS (QUESTIONING, PLANNING, AND COLLECTING)",
+    "id": "week_9",
+    "title": "Week 9: STATISTICS (QUESTIONING, PLANNING, AND COLLECTING)",
     "questions": [
       {
-        "questionNumber": 1,
-        "questionText": "Explain the difference between numerical data and categorical data, providing an example of each.",
-        "answerText": "Numerical data represents quantities that can be counted or measured (e.g., a student's height). Categorical data represents qualities, groupings, or descriptors (e.g., a student's favorite color).",
-        "processText": ""
+        "number": 1,
+        "question": "Explain the difference between numerical data and categorical data, providing an example of each.",
+        "answer_core": "Numerical data represents quantities that can be counted or measured (e.g., a student's height). Categorical data represents qualities, groupings, or descriptors (e.g., a student's favorite color).",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 2,
-        "questionText": "What qualifies a dataset as being multivariate? Give a quick example.",
-        "answerText": "A multivariate dataset records two or more distinct variables for each observed individual. For example, tracking both the height and shoe size of a single person simultaneously.",
-        "processText": ""
+        "number": 2,
+        "question": "What qualifies a dataset as being multivariate? Give a quick example.",
+        "answer_core": "A multivariate dataset records two or more distinct variables for each observed individual. For example, tracking both the height and shoe size of a single person simultaneously.",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 3,
-        "questionText": "Rewrite this biased survey question to make it objective and neutral: \"Don't you agree that school uniforms are restrictive and should be banned?\"",
-        "answerText": "Neutral rewrite: \"What is your opinion on the school uniform policy?\"",
-        "processText": ""
+        "number": 3,
+        "question": "Rewrite this biased survey question to make it objective and neutral: \"Don't you agree that school uniforms are restrictive and should be banned?\"",
+        "answer_core": "Neutral rewrite: \"What is your opinion on the school uniform policy?\"",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 4,
-        "questionText": "Write a statistical comparison question to investigate the water consumption habits of two different groups of students.",
-        "answerText": "\"Is there a difference between the median daily water consumption (in mL) of Year 7 students compared to Year 12 students?\"",
-        "processText": ""
+        "number": 4,
+        "question": "Write a statistical comparison question to investigate the water consumption habits of two different groups of students.",
+        "answer_core": "\"Is there a difference between the median daily water consumption (in mL) of Year 7 students compared to Year 12 students?\"",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 5,
-        "questionText": "Design a multiple-choice survey question containing at least 4 clear, non-overlapping categories to find out how students travel to school.",
-        "answerText": "\"How do you primarily travel to school? A) Walking, B) Bicycle/Scooter, C) Private Car, D) Public Transport (Bus/Train).\"",
-        "processText": ""
+        "number": 5,
+        "question": "Design a multiple-choice survey question containing at least 4 clear, non-overlapping categories to find out how students travel to school.",
+        "answer_core": "\"How do you primarily travel to school? A) Walking, B) Bicycle/Scooter, C) Private Car, D) Public Transport (Bus/Train).\"",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 6,
-        "questionText": "You need to measure school bag weights for a project. Write a basic plan detailing who you will measure, what tool you will use, and how you will keep measurements accurate.",
-        "answerText": "Who: 30 randomly selected students from each year level. What: A calibrated digital scale. How: Weigh all subjects using the same scale on a flat surface, ensuring bags are closed and recording values to the nearest 0.1 kg.",
-        "processText": ""
+        "number": 6,
+        "question": "You need to measure school bag weights for a project. Write a basic plan detailing who you will measure, what tool you will use, and how you will keep measurements accurate.",
+        "answer_core": "Who: 30 randomly selected students from each year level. What: A calibrated digital scale. How: Weigh all subjects using the same scale on a flat surface, ensuring bags are closed and recording values to the nearest 0.1 kg.",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 7,
-        "questionText": "Why must statisticians perform data \"cleaning\" steps after collecting primary survey responses?",
-        "answerText": "To detect and correct data entry mistakes, incomplete responses, formatting inconsistencies, or clear layout anomalies that might break calculation tools or skew analysis.",
-        "processText": ""
+        "number": 7,
+        "question": "Why must statisticians perform data \"cleaning\" steps after collecting primary survey responses?",
+        "answer_core": "To detect and correct data entry mistakes, incomplete responses, formatting inconsistencies, or clear layout anomalies that might break calculation tools or skew analysis.",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 8,
-        "questionText": "Classify this specific variable type: The exact time it takes a student to run 100 meters.",
-        "answerText": "Numerical Continuous data",
-        "processText": "it is a measurement that can take any fractional value along a continuous scale"
+        "number": 8,
+        "question": "Classify this specific variable type: The exact time it takes a student to run 100 meters.",
+        "answer_core": "Numerical Continuous data",
+        "answer_walkthrough": "Solution: it is a measurement that can take any fractional value along a continuous scale"
       },
       {
-        "questionNumber": 9,
-        "questionText": "Classify this specific variable type: The number of pets living in a student's household.",
-        "answerText": "Numerical Discrete data",
-        "processText": "it represents a distinct count that must be a whole number"
+        "number": 9,
+        "question": "Classify this specific variable type: The number of pets living in a student's household.",
+        "answer_core": "Numerical Discrete data",
+        "answer_walkthrough": "Solution: it represents a distinct count that must be a whole number"
       },
       {
-        "questionNumber": 10,
-        "questionText": "While cleaning a dataset of student heights measured in centimeters, you find these entries: 142, 155, 14.8, 161. Identify the error and describe how to fix it.",
-        "answerText": "The entry 14.8 is an error, likely a misplaced decimal point meant to be 148 cm. To fix it, you should verify the true measurement against the physical log sheets; if it cannot be confirmed, remove the corrupted data point to keep the set clean.",
-        "processText": ""
+        "number": 10,
+        "question": "While cleaning a dataset of student heights measured in centimeters, you find these entries: 142, 155, 14.8, 161. Identify the error and describe how to fix it.",
+        "answer_core": "The entry 14.8 is an error, likely a misplaced decimal point meant to be 148 cm. To fix it, you should verify the true measurement against the physical log sheets; if it cannot be confirmed, remove the corrupted data point to keep the set clean.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 11,
+        "question": "Identify whether the following data points are numerical or categorical: A student's favorite sport, and a student's weight in kilograms.",
+        "answer_core": "Favorite sport is categorical data; weight is numerical data.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 12,
+        "question": "You gather data on classmates and record their eye color, hair color, and age. Is this an example of a univariate or multivariate dataset? Explain why.",
+        "answer_core": "Multivariate dataset, because you are tracking more than two distinct variables (three variables total) for each individual student.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 13,
+        "question": "Rewrite this biased survey question to make it objective and neutral: \"Don't you think our school should spend less money on sports gear and more on classroom books?\"",
+        "answer_core": "Neutral rewrite: \"How do you think funding should be prioritized between sports equipment and classroom books?\"",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 14,
+        "question": "Write a statistical comparison question to investigate the bedtime habits of middle school students versus senior high school students.",
+        "answer_core": "\"Is there a difference between the median bedtime (on school nights) of Year 7 students compared to Year 13 students?\"",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 15,
+        "question": "Design a multiple-choice survey question containing at least 4 clear, non-overlapping choices to find out what students drink most often during lunch.",
+        "answer_core": "\"What is your primary choice of beverage during lunchtime? A) Water, B) Milk, C) Fruit Juice, D) Soft Drink &divide; Fizzy Drink.\"",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 16,
+        "question": "You want to gather data on student screen time for a statistics project. Write a plan detailing who you will sample, what you will measure, and how you will keep data accurate.",
+        "answer_core": "Who: 25 randomly selected students from each year level. What: Weekly smartphone screen time report summaries (in hours/minutes). How: Have students show their automated settings screen time log on Monday morning to ensure data isn't guessed or estimated.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 17,
+        "question": "Give an example of how \"uncleaned\" survey data could skew a computer data analysis tool or lead to a bad conclusion.",
+        "answer_core": "If a student types \"1500\" instead of \"150\" for their height in centimeters, leaving that uncleaned error in place will massively skew the average, falsely making the entire class seem much taller than they are.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 18,
+        "question": "Classify this specific variable type: The temperature recorded outside the classroom at noon (in degrees Celsius).",
+        "answer_core": "Numerical Continuous data",
+        "answer_walkthrough": "Solution: it is a physical measurement that can fall anywhere along a fractional continuous scale"
+      },
+      {
+        "number": 19,
+        "question": "Classify this specific variable type: The total number of correct answers scored on a 20-question spelling test.",
+        "answer_core": "Numerical Discrete data",
+        "answer_walkthrough": "Solution: it is a distinct count of individual items that must be a whole number"
+      },
+      {
+        "number": 20,
+        "question": "While cleaning a digital spreadsheet of student travel times to school (recorded in minutes), you see these entries: 12, 25, -5, 18. Identify the anomaly and how to handle it.",
+        "answer_core": "The entry -5 is a clear error because time cannot be negative. To handle it, you should look up the original paper questionnaire to see if it was a data entry typo for \"5\"; if the true value cannot be found, erase the -5 point entirely so it doesn't break your tracking logic.",
+        "answer_walkthrough": ""
       }
     ]
   },
   {
-    "weekNumber": 10,
-    "weekTitle": "3D GEOMETRY (SHAPES AND NETS)",
+    "id": "week_10",
+    "title": "Week 10: 3D GEOMETRY (SHAPES AND NETS)",
     "questions": [
       {
-        "questionNumber": 1,
-        "questionText": "Identify and list the individual 2D shapes that form all the faces of a regular triangular prism.",
-        "answerText": "2 identical triangles (forming the parallel bases) and 3 rectangles (forming the connecting sides).",
-        "processText": ""
+        "number": 1,
+        "question": "Identify and list the individual 2D shapes that form all the faces of a regular triangular prism.",
+        "answer_core": "2 identical triangles (forming the parallel bases) and 3 rectangles (forming the connecting sides).",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 2,
-        "questionText": "State the number of faces, edges, and vertices found on a standard cube.",
-        "answerText": "6 faces, 12 edges, and 8 vertices.",
-        "processText": ""
+        "number": 2,
+        "question": "State the number of faces, edges, and vertices found on a standard cube.",
+        "answer_core": "6 faces, 12 edges, and 8 vertices.",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 3,
-        "questionText": "A 3D solid features 1 flat hexagonal base and 6 triangular faces that meet at an apex point at the top. Is this a prism or a pyramid? State its full geometric name.",
-        "answerText": "It is a pyramid; its full name is a hexagonal pyramid.",
-        "processText": ""
+        "number": 3,
+        "question": "A 3D solid features 1 flat hexagonal base and 6 triangular faces that meet at an apex point at the top. Is this a prism or a pyramid? State its full geometric name.",
+        "answer_core": "It is a pyramid; its full name is a hexagonal pyramid.",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 4,
-        "questionText": "A mystery solid contains exactly 5 faces, 9 edges, and 6 vertices. What is the name of this shape?",
-        "answerText": "A triangular prism.",
-        "processText": ""
+        "number": 4,
+        "question": "A mystery solid contains exactly 5 faces, 9 edges, and 6 vertices. What is the name of this shape?",
+        "answer_core": "A triangular prism.",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 5,
-        "questionText": "True or False: A pyramid can have lateral faces (sides) shaped like rectangles. Explain your answer.",
-        "answerText": "False. By definition, a pyramid's lateral faces must always be triangles that meet at a shared apex point at the top.",
-        "processText": ""
+        "number": 5,
+        "question": "True or False: A pyramid can have lateral faces (sides) shaped like rectangles. Explain your answer.",
+        "answer_core": "False. By definition, a pyramid's lateral faces must always be triangles that meet at a shared apex point at the top.",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 6,
-        "questionText": "True or False: A prism must have two identical bases that are perfectly parallel to each other.",
-        "answerText": "True.",
-        "processText": ""
+        "number": 6,
+        "question": "True or False: A prism must have two identical bases that are perfectly parallel to each other.",
+        "answer_core": "True.",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 7,
-        "questionText": "If you open and unroll a standard cylinder flat onto a workbench, what flat 2D shapes make up its net?",
-        "answerText": "1 large rectangle (the curved body) and 2 identical circles (the top and bottom caps).",
-        "processText": ""
+        "number": 7,
+        "question": "If you open and unroll a standard cylinder flat onto a workbench, what flat 2D shapes make up its net?",
+        "answer_core": "1 large rectangle (the curved body) and 2 identical circles (the top and bottom caps).",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 8,
-        "questionText": "Describe the layout of the net for a square-based pyramid.",
-        "answerText": "The net consists of a central square base, with 4 identical triangles branching outward from each of its four edges.",
-        "processText": ""
+        "number": 8,
+        "question": "Describe the layout of the net for a square-based pyramid.",
+        "answer_core": "The net consists of a central square base, with 4 identical triangles branching outward from each of its four edges.",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 9,
-        "questionText": "Imagine looking directly down from above at a right triangular prism standing upright on its triangular base. What 2D shape do you see from this top view?",
-        "answerText": "A triangle.",
-        "processText": ""
+        "number": 9,
+        "question": "Imagine looking directly down from above at a right triangular prism standing upright on its triangular base. What 2D shape do you see from this top view?",
+        "answer_core": "A triangle.",
+        "answer_walkthrough": ""
       },
       {
-        "questionNumber": 10,
-        "questionText": "A solid shape contains 2 identical hexagonal bases and 6 rectangular faces connecting them. Calculate the total number of vertices this solid has.",
-        "answerText": "12 vertices (Process: 6 vertices on the top hexagon plus 6 vertices on the bottom hexagon).",
-        "processText": ""
+        "number": 10,
+        "question": "A solid shape contains 2 identical hexagonal bases and 6 rectangular faces connecting them. Calculate the total number of vertices this solid has.",
+        "answer_core": "12 vertices (Process: 6 vertices on the top hexagon plus 6 vertices on the bottom hexagon).",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 11,
+        "question": "Identify and list the individual 2D shapes that form all the faces of a standard square prism (cuboid).",
+        "answer_core": "6 rectangles (or 2 square bases and 4 connecting rectangles).",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 12,
+        "question": "State the number of faces, edges, and vertices found on a standard triangular-based pyramid (tetrahedron).",
+        "answer_core": "4 faces, 6 edges, and 4 vertices.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 13,
+        "question": "A 3D solid features 2 parallel, identical octagonal shapes at opposite ends connected by 8 rectangular panels. Is this a prism or a pyramid? State its full geometric name.",
+        "answer_core": "It is a prism; its full name is an octagonal prism.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 14,
+        "question": "A mystery solid contains exactly 5 faces, 8 edges, and 5 vertices. What is the name of this shape?",
+        "answer_core": "A square pyramid (or rectangular pyramid).",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 15,
+        "question": "True or False: A prism can have lateral faces (sides) that are shaped like triangles. Explain your answer.",
+        "answer_core": "False. By definition, a prism's lateral faces must always be rectangles or parallelograms that connect its two parallel bases.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 16,
+        "question": "True or False: A pyramid must have exactly one base, and all other faces must meet at a single point called the apex.",
+        "answer_core": "True.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 17,
+        "question": "If you unfold a cardboard box shaped like a triangular pyramid, what flat 2D shapes make up its net layout?",
+        "answer_core": "4 triangles total (1 base triangle and 3 lateral triangles).",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 18,
+        "question": "Describe the layout of the net for a regular triangular prism standing upright.",
+        "answer_core": "The net consists of 3 rectangles lined up side-by-side in a row, with 2 identical triangles attached to the top and bottom edges of the central rectangle.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 19,
+        "question": "Imagine looking directly down from above at a sharp cone sitting flat on its circular base. What 2D shape do you see from this top view, and what feature marks the center?",
+        "answer_core": "You see a circle, with a central point or dot marking the apex point at the top of the cone.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 20,
+        "question": "A solid shape contains 1 flat pentagonal base and 5 triangular faces meeting at the top. Calculate the total number of edges this solid has.",
+        "answer_core": "10 edges (Process: 5 edges around the bottom pentagon base plus 5 edges rising up the sides to the apex).",
+        "answer_walkthrough": ""
       }
     ]
   },
   {
-    "weekNumber": 11,
-    "weekTitle": "VOLUME OF PRISMS",
+    "id": "week_11",
+    "title": "Week 11: VOLUME OF PRISMS",
     "questions": [
       {
-        "questionNumber": 1,
-        "questionText": "Calculate the volume of a plastic storage cube that features a side length of 6 cm.",
-        "answerText": "216 cm^3",
-        "processText": "Volume = side^3 = 6 x 6 x 6 = 216"
+        "number": 1,
+        "question": "Calculate the volume of a plastic storage cube that features a side length of 6 cm.",
+        "answer_core": "216 cm<sup>3</sup>",
+        "answer_walkthrough": "Solution: Volume = side<sup>3</sup> = 6 x 6 x 6 = 216"
       },
       {
-        "questionNumber": 2,
-        "questionText": "A rectangular tissue box measures 20 cm long, 10 cm wide, and 8 cm high. Find its volume.",
-        "answerText": "1600 cm^3",
-        "processText": "Volume = length x width x height = 20 x 10 x 8 = 1600"
+        "number": 2,
+        "question": "A rectangular tissue box measures 20 cm long, 10 cm wide, and 8 cm high. Find its volume.",
+        "answer_core": "1600 cm<sup>3</sup>",
+        "answer_walkthrough": "Solution: Volume = length x width x height = 20 x 10 x 8 = 1600"
       },
       {
-        "questionNumber": 3,
-        "questionText": "Calculate the volume of a right triangular prism where the triangular cross-section has a base of 8 cm and a height of 5 cm, and the total depth of the prism is 12 cm.",
-        "answerText": "240 cm^3",
-        "processText": "Area of the triangle base = 0.5 x 8 x 5 = 20 cm^2. Volume = 20 x 12 = 240"
+        "number": 3,
+        "question": "Calculate the volume of a right triangular prism where the triangular cross-section has a base of 8 cm and a height of 5 cm, and the total depth of the prism is 12 cm.",
+        "answer_core": "240 cm<sup>3</sup>",
+        "answer_walkthrough": "Solution: Area of the triangle base = 0.5 x 8 x 5 = 20 cm<sup>2</sup>. Volume = 20 x 12 = 240"
       },
       {
-        "questionNumber": 4,
-        "questionText": "A rectangular prism has a known volume of 150 cm^3. If its length is 5 cm and its width is 3 cm, find its missing height.",
-        "answerText": "10 cm",
-        "processText": "150 = 5 x 3 x height -> 150 = 15h -> height = 10"
+        "number": 4,
+        "question": "A rectangular prism has a known volume of 150 cm<sup>3</sup>. If its length is 5 cm and its width is 3 cm, find its missing height.",
+        "answer_core": "10 cm",
+        "answer_walkthrough": "Solution: 150 = 5 x 3 x height -> 150 = 15h -> height = 10"
       },
       {
-        "questionNumber": 5,
-        "questionText": "Calculate the total volume of a compound step-shape built by fusing two rectangular blocks together:\nBlock A measures 3 cm x 4 cm x 5 cm.\nBlock B measures 2 cm x 3 cm x 6 cm.",
-        "answerText": "96 cm^3",
-        "processText": "Volume A = 3 x 4 x 5 = 60 cm^3. Volume B = 2 x 3 x 6 = 36 cm^3. Total volume = 60 + 36 = 96"
+        "number": 5,
+        "question": "Calculate the total volume of a compound step-shape built by fusing two rectangular blocks together: Block A measures 3 cm x 4 cm x 5 cm. Block B measures 2 cm x 3 cm x 6 cm.",
+        "answer_core": "96 cm<sup>3</sup>",
+        "answer_walkthrough": "Solution: Volume A = 3 x 4 x 5 = 60 cm<sup>3</sup>. Volume B = 2 x 3 x 6 = 36 cm<sup>3</sup>. Total volume = 60 + 36 = 96"
       },
       {
-        "questionNumber": 6,
-        "questionText": "An aquarium tank is a rectangular prism measuring 50 cm long, 30 cm wide, and 20 cm deep. Given that 1 cm^3 = 1 mL, how many liters of water does it hold when completely full?",
-        "answerText": "30 Liters",
-        "processText": "Volume = 50 x 30 x 20 = 30,000 cm^3 = 30,000 mL. Converting to liters: 30,000 / 1000 = 30 L"
+        "number": 6,
+        "question": "An aquarium tank is a rectangular prism measuring 50 cm long, 30 cm wide, and 20 cm deep. Given that 1 cm<sup>3</sup> = 1 mL, how many liters of water does it hold when completely full?",
+        "answer_core": "30 Liters",
+        "answer_walkthrough": "Solution: Volume = 50 x 30 x 20 = 30,000 cm<sup>3</sup> = 30,000 mL. Converting to liters: 30,000 &divide; 1000 = 30 L"
       },
       {
-        "questionNumber": 7,
-        "questionText": "The irregular cross-sectional face of a specialized prism has a calculated area of 35 cm^2. If the length of the prism is 15 cm, what is its total volume?",
-        "answerText": "525 cm^3",
-        "processText": "Volume = Base Area x length = 35 x 15 = 525"
+        "number": 7,
+        "question": "The irregular cross-sectional face of a specialized prism has a calculated area of 35 cm<sup>2</sup>. If the length of the prism is 15 cm, what is its total volume?",
+        "answer_core": "525 cm<sup>3</sup>",
+        "answer_walkthrough": "Solution: Volume = Base Area x length = 35 x 15 = 525"
       },
       {
-        "questionNumber": 8,
-        "questionText": "A commercial shipping container measures 12 m long, 2.5 m wide, and 2 m high. Compute the total interior space volume.",
-        "answerText": "60 m^3",
-        "processText": "Volume = 12 x 2.5 x 2 = 60"
+        "number": 8,
+        "question": "A commercial shipping container measures 12 m long, 2.5 m wide, and 2 m high. Compute the total interior space volume.",
+        "answer_core": "60 m<sup>3</sup>",
+        "answer_walkthrough": "Solution: Volume = 12 x 2.5 x 2 = 60"
       },
       {
-        "questionNumber": 9,
-        "questionText": "Find the total volume of a compound structure made of a rectangular prism base (10 cm long, 4 cm wide, 5 cm high) topped symmetrically by a right triangular prism. The triangular prism shares the same length (10 cm) and width (4 cm), and features a triangle height of 3 cm.",
-        "answerText": "260 cm^3",
-        "processText": "Rectangular base volume = 10 x 4 x 5 = 200 cm^3. Triangular top volume = (0.5 x 4 x 3) x 10 = 6 x 10 = 60 cm^3. Combined Volume = 200 + 60 = 260"
+        "number": 9,
+        "question": "Find the total volume of a compound structure made of a rectangular prism base (10 cm long, 4 cm wide, 5 cm high) topped symmetrically by a right triangular prism. The triangular prism shares the same length (10 cm) and width (4 cm), and features a triangle height of 3 cm.",
+        "answer_core": "260 cm<sup>3</sup>",
+        "answer_walkthrough": "Solution: Rectangular base volume = 10 x 4 x 5 = 200 cm<sup>3</sup>. Triangular top volume = (0.5 x 4 x 3) x 10 = 6 x 10 = 60 cm<sup>3</sup>. Combined Volume = 200 + 60 = 260"
       },
       {
-        "questionNumber": 10,
-        "questionText": "Explain why volume calculations must always be recorded using cubic units (e.g., cm^3, m^3) instead of square units (e.g., cm^2, m^2).",
-        "answerText": "Square units measure two-dimensional space (flat surface area). Volume measures three-dimensional space, requiring three perpendicular measurements (length, width, and height) to be multiplied together, which mathematically produces cubic values.",
-        "processText": ""
+        "number": 10,
+        "question": "Explain why volume calculations must always be recorded using cubic units (e.g., cm<sup>3</sup>, m<sup>3</sup>) instead of square units (e.g., cm<sup>2</sup>, m<sup>2</sup>).",
+        "answer_core": "Square units measure two-dimensional space (flat surface area). Volume measures three-dimensional space, requiring three perpendicular measurements (length, width, and height) to be multiplied together, which mathematically produces cubic values.",
+        "answer_walkthrough": ""
+      },
+      {
+        "number": 11,
+        "question": "Calculate the volume of a wooden toy cube that features a side length of 5 cm.",
+        "answer_core": "125 cm<sup>3</sup>",
+        "answer_walkthrough": "Solution: Volume = side<sup>3</sup> = 5 x 5 x 5 = 125"
+      },
+      {
+        "number": 12,
+        "question": "A cardboard shipping box measures 30 cm long, 20 cm wide, and 10 cm high. Find its volume.",
+        "answer_core": "6000 cm<sup>3</sup>",
+        "answer_walkthrough": "Solution: Volume = length x width x height = 30 x 20 x 10 = 6000"
+      },
+      {
+        "number": 13,
+        "question": "Calculate the volume of a right triangular prism where the triangular cross-section has a base of 6 cm and a height of 4 cm, and the total depth of the prism is 10 cm.",
+        "answer_core": "120 cm<sup>3</sup>",
+        "answer_walkthrough": "Solution: Area of the triangle base = 0.5 x 6 x 4 = 12 cm<sup>2</sup>. Volume = 12 x 10 = 120"
+      },
+      {
+        "number": 14,
+        "question": "A rectangular prism has a known volume of 240 cm<sup>3</sup>. If its length is 8 cm and its width is 5 cm, find its missing height.",
+        "answer_core": "6 cm",
+        "answer_walkthrough": "Solution: 240 = 8 x 5 x height -> 240 = 40h -> height = 6"
+      },
+      {
+        "number": 15,
+        "question": "Calculate the total volume of a compound step-shape built by fusing two rectangular blocks together: Block A measures 2 cm x 4 cm x 5 cm. Block B measures 3 cm x 3 cm x 4 cm.",
+        "answer_core": "76 cm<sup>3</sup>",
+        "answer_walkthrough": "Solution: Volume A = 2 x 4 x 5 = 40 cm<sup>3</sup>. Volume B = 3 x 3 x 4 = 36 cm<sup>3</sup>. Total volume = 40 + 36 = 76"
+      },
+      {
+        "number": 16,
+        "question": "A water tank is a rectangular prism measuring 40 cm long, 25 cm wide, and 20 cm deep. Given that 1 cm<sup>3</sup> = 1 mL, how many liters of water does it hold when completely full?",
+        "answer_core": "20 Liters",
+        "answer_walkthrough": "Solution: Volume = 40 x 25 x 20 = 20,000 cm<sup>3</sup> = 20,000 mL. Converting to liters: 20,000 &divide; 1000 = 20 L"
+      },
+      {
+        "number": 17,
+        "question": "The irregular cross-sectional face of a custom structural pillar has a calculated area of 45 cm<sup>2</sup>. If the height of the pillar is 20 cm, what is its total volume?",
+        "answer_core": "900 cm<sup>3</sup>",
+        "answer_walkthrough": "Solution: Volume = Base Area x height = 45 x 20 = 900"
+      },
+      {
+        "number": 18,
+        "question": "A storage locker measures 3 m long, 2 m wide, and 2.5 m high. Compute the total interior space volume.",
+        "answer_core": "15 m<sup>3</sup>",
+        "answer_walkthrough": "Solution: Volume = 3 x 2 x 2.5 = 15"
+      },
+      {
+        "number": 19,
+        "question": "Find the total volume of a compound display block made of a rectangular base (8 cm long, 5 cm wide, 4 cm high) topped symmetrically by a right triangular prism roof. The triangular top shares the same length (8 cm) and width (5 cm), and features a triangle height of 4 cm.",
+        "answer_core": "240 cm<sup>3</sup>",
+        "answer_walkthrough": "Solution: Rectangular base volume = 8 x 5 x 4 = 160 cm<sup>3</sup>. Triangular top volume = (0.5 x 5 x 4) x 8 = 10 x 8 = 80 cm<sup>3</sup>. Combined Volume = 160 + 80 = 240"
+      },
+      {
+        "number": 20,
+        "question": "If you double the depth/length of a rectangular prism but keep its front face dimensions exactly the same, what happens to the total volume of that prism? Explain why.",
+        "answer_core": "The total volume doubles. Because volume is calculated by multiplying the base face area by the length/depth, scaling the depth by a factor of 2 directly scales the resulting volume product by 2.",
+        "answer_walkthrough": ""
       }
     ]
   }
 ];
 
     // State Variables
-    let currentWeekIndex = 0;
-    let currentQuestionIndex = 0;
-    let isAnswerRevealed = false;
-    let isCelebrationState = false;
-    let isDashboardState = true;
-    let confetti = null;
+    let currentTopic = null;
+    let questionIndex = 0;
+    let showAnswer = false;
+    let isTransitioning = false;
 
-    // Confetti Animation Engine
-    class ConfettiEngine {
-      constructor(canvas) {
-        this.canvas = canvas;
-        this.ctx = canvas.getContext('2d');
-        this.particles = [];
-        this.colors = ['#f59e0b', '#10b981', '#06b6d4', '#8b5cf6', '#ec4899'];
-        this.active = false;
-        this.resize();
-        window.addEventListener('resize', () => this.resize());
-      }
-      
-      resize() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-      }
-      
-      start() {
-        this.particles = [];
-        this.active = true;
-        for (let i = 0; i < 120; i++) {
-          this.particles.push({
-            x: Math.random() * this.canvas.width,
-            y: Math.random() * this.canvas.height - this.canvas.height,
-            r: Math.random() * 6 + 4,
-            d: Math.random() * this.canvas.height,
-            color: this.colors[Math.floor(Math.random() * this.colors.length)],
-            tilt: Math.random() * 10 - 5,
-            tiltAngleIncremental: Math.random() * 0.05 + 0.02,
-            tiltAngle: 0
-          });
-        }
-        this.animate();
-      }
-      
-      stop() {
-        this.active = false;
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      }
-      
-      animate() {
-        if (!this.active) return;
-        requestAnimationFrame(() => this.animate());
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        for (let i = 0; i < this.particles.length; i++) {
-          let p = this.particles[i];
-          p.tiltAngle += p.tiltAngleIncremental;
-          p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
-          p.x += Math.sin(p.tiltAngle);
-          p.tilt = Math.sin(p.tiltAngle - i / 3) * 12;
-          
-          if (p.y > this.canvas.height) {
-            p.y = -20;
-            p.x = Math.random() * this.canvas.width;
-          }
-          
-          this.ctx.beginPath();
-          this.ctx.lineWidth = p.r;
-          this.ctx.strokeStyle = p.color;
-          this.ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
-          this.ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
-          this.ctx.stroke();
-        }
-      }
-    }
+    // SVG Icons
+    const eyeIcon = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>`;
+    const arrowIcon = `<polyline points="9 18 15 12 9 6"></polyline>`;
 
-    // Text formatting function for fractions, operators, variables and negative signs
-    function formatMath(text) {
-      if (!text) return "";
-      
-      let formatted = text;
-      
-      // Standardize degrees C display to modern °C symbol
-      formatted = formatted.replace(/degrees\s+C\b/g, '&deg;C');
-      
-      // Superscripts for exponents (e.g. 2^2, cm^3, m^3)
-      formatted = formatted.replace(/\^(\d+)/g, '<sup>$1</sup>');
-      
-      // Real mathematical multiplication symbol
-      formatted = formatted.replace(/\s+x\s+/g, ' &times; ');
-      formatted = formatted.replace(/\s*\*\s*/g, ' &times; ');
-      
-      // Fractions layout (e.g. 24/36, y/3)
-      formatted = formatted.replace(/\b(\d+|[a-zA-Z])\/(\d+)\b/g, 
-        '<span class="fraction"><span class="num">$1</span><span class="den">$2</span></span>');
-      
-      // Variables: numeric coefficients followed by single letters (e.g. 2x, 8x, 5a)
-      formatted = formatted.replace(/(\d+(?:\.\d+)?)([xyabckmnC])\b/g, '$1<span class="math-var">$2</span>');
-      
-      // Standalone variables (e.g. x, y, b, c, m, n, k, C)
-      formatted = formatted.replace(/\b([xybckmnC])\b/g, '<span class="math-var">$1</span>');
-      
-      // Standalone 'a' as a variable when surrounded by math context/operators
-      formatted = formatted.replace(/(\s+[\+\-\=&times;]\s+)(a)\b/g, '$1<span class="math-var">$2</span>');
-      formatted = formatted.replace(/\b(a)(\s+[\+\-\=&times;]\s+)/g, '<span class="math-var">$1</span>$2');
-      
-      // Negative integers: convert dash to non-breaking &minus;
-      formatted = formatted.replace(/(^|[\s(])-(\d+)/g, '$1&minus;$2');
-      
-      return formatted;
-    }
+    // Initial render of topic cards
+    initApp();
 
-    // Dynamic Font-Sizing Engine (Fits text comfortably on the screen without overflow)
-    function fitText(element, maxFontSizeVh) {
-      element.style.fontSize = maxFontSizeVh + 'vh';
-      let fontSize = maxFontSizeVh;
-      const parent = element.parentElement;
-      if (!parent) return;
+    /**
+     * Renders the grid of topics on the launch screen
+     */
+    function initApp() {
+      const grid = document.getElementById('topics-grid');
+      grid.innerHTML = '';
       
-      // Shrink step-by-step until element scrollheight is within parent bounds
-      while ((element.scrollHeight > parent.clientHeight || element.scrollWidth > parent.clientWidth) && fontSize > 1.2) {
-        fontSize -= 0.1;
-        element.style.fontSize = fontSize + 'vh';
-      }
-    }
-
-    function autoSizeCardText() {
-      const qText = document.getElementById('question-text');
-      const aText = document.getElementById('answer-text');
-      const pText = document.getElementById('process-text');
-      
-      if (qText) fitText(qText, 4.8);
-      if (aText) fitText(aText, 6.8); // ANSWER WAY BIGGER (6.8vh)
-      if (pText) fitText(pText, 2.2); // WORKINGS SMALLER (2.2vh)
-    }
-
-    // Render Dashboard View Weeks grid
-    function buildDashboard() {
-      const grid = document.getElementById('weeks-grid');
-      grid.innerHTML = "";
-      
-      weeksData.forEach((w, index) => {
+      flashcardData.forEach(topic => {
         const card = document.createElement('div');
-        card.className = 'week-card';
-        card.onclick = () => jumpToWeek(index);
+        card.className = 'topic-card';
+        card.onclick = () => selectTopic(topic.id);
+        
+        // Find Week number
+        const match = topic.title.match(/Week\s+(\d+)/i);
+        const weekNum = match ? match[1] : '';
+        const rawTitle = topic.title.replace(/Week\s+\d+:\s*/i, '');
         
         card.innerHTML = `
-          <div class="week-card-number">WEEK ${w.weekNumber}</div>
-          <div class="week-card-title">${w.weekTitle}</div>
-          <div class="week-card-questions">10 Questions</div>
+          <div>
+            <div class="topic-week">Week ${weekNum}</div>
+            <div class="topic-title">${rawTitle}</div>
+          </div>
+          <div class="topic-meta">${topic.questions.length} Questions</div>
         `;
+        
         grid.appendChild(card);
       });
     }
 
-    // Show Dashboard State
-    function showDashboard() {
-      isDashboardState = true;
-      document.getElementById('dashboard-view').style.display = 'flex';
-      document.getElementById('deck-view').style.display = 'none';
-      if (confetti) confetti.stop();
+    /**
+     * Selects a topic and enters the flashcard view
+     */
+    function selectTopic(topicId) {
+      currentTopic = flashcardData.find(t => t.id === topicId);
+      if (!currentTopic) return;
+      
+      questionIndex = 0;
+      showAnswer = false;
+      
+      // Update badge category
+      updateOperationBadge(currentTopic.title);
+      
+      // Render question content
+      renderQuestion();
+      
+      // Switch view to flashcard practice
+      switchView('flashcard-view');
     }
 
-    // Initialize UI Sidebar Week selector
-    function buildSidebar() {
-      const menu = document.getElementById('sidebar-menu');
-      menu.innerHTML = "";
-      
-      weeksData.forEach((w, index) => {
-        const btn = document.createElement('button');
-        btn.className = `menu-item ${index === currentWeekIndex ? 'active' : ''}`;
-        btn.onclick = () => jumpToWeek(index);
-        
-        btn.innerHTML = `
-          <span class="menu-item-week">Week ${w.weekNumber}</span>
-          <span class="menu-item-title">${w.weekTitle}</span>
-        `;
-        menu.appendChild(btn);
-      });
+    /**
+     * Helper to get clean plain text length (ignoring HTML tags)
+     */
+    function getPlainTextLength(html) {
+      const temp = document.createElement('div');
+      temp.innerHTML = html;
+      return temp.textContent.trim().length;
     }
 
-    // Open/Close Sidebar Drawer
-    function toggleSidebar(open) {
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('sidebar-overlay');
+    /**
+     * Dynamically sets class names on question/answer displays to size text optimally
+     */
+    function applyDynamicFontSize(element, htmlContent, isAnswer = false) {
+      const len = getPlainTextLength(htmlContent);
+      let sizeClass = '';
       
-      if (open) {
-        sidebar.classList.add('open');
-        overlay.classList.add('open');
+      if (isAnswer) {
+        if (len < 18) sizeClass = 'size-ans-large';
+        else if (len < 55) sizeClass = 'size-ans-medium';
+        else sizeClass = 'size-ans-small';
       } else {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('open');
+        if (len < 45) sizeClass = 'size-q-large';
+        else if (len < 120) sizeClass = 'size-q-medium';
+        else sizeClass = 'size-q-small';
+      }
+      
+      element.className = isAnswer ? 'answer-core-text ' + sizeClass : 'question-display ' + sizeClass;
+    }
+
+    /**
+     * Dynamically sets class names on solution walkthrough text
+     */
+    function applyWalkthroughFontSize(element, htmlContent) {
+      const len = getPlainTextLength(htmlContent);
+      let sizeClass = 'size-wk-medium';
+      
+      if (len < 55) sizeClass = 'size-wk-large';
+      else if (len > 160) sizeClass = 'size-wk-small';
+      
+      element.className = 'answer-walkthrough-text ' + sizeClass;
+    }
+
+    /**
+     * Renders the current question to the view, hiding the answer
+     */
+    function renderQuestion() {
+      if (!currentTopic || !currentTopic.questions[questionIndex]) return;
+      
+      const qObj = currentTopic.questions[questionIndex];
+      
+      // Update title text in header
+      const match = currentTopic.title.match(/Week\s+(\d+)/i);
+      const weekNum = match ? `Week ${match[1]}` : 'Practice';
+      document.getElementById('header-topic-title').textContent = weekNum;
+      
+      // Clear container and write question
+      const container = document.getElementById('question-box');
+      
+      const qDiv = document.createElement('div');
+      qDiv.innerHTML = qObj.question;
+      applyDynamicFontSize(qDiv, qObj.question, false);
+      
+      container.innerHTML = '';
+      container.appendChild(qDiv);
+      
+      showAnswer = false;
+      
+      // Reset action button
+      document.getElementById('btn-label').textContent = 'Show Answer';
+      document.getElementById('btn-icon').innerHTML = eyeIcon;
+      
+      // Enable/disable Back button
+      const prevBtn = document.getElementById('prev-btn');
+      if (questionIndex === 0) {
+        prevBtn.disabled = true;
+      } else {
+        prevBtn.disabled = false;
+      }
+      
+      // Update bottom slide counter
+      const totalQuestions = currentTopic.questions.length;
+      document.getElementById('slide-counter').textContent = `Question ${questionIndex + 1} of ${totalQuestions}`;
+    }
+
+    /**
+     * Toggles between "Show Answer" and "Next"
+     */
+    function handleAction() {
+      if (isTransitioning) return;
+      document.getElementById('action-btn').blur();
+
+      if (!showAnswer) {
+        revealAnswer();
+      } else {
+        advanceQuestion();
       }
     }
 
-    // Transition Animations and Slide loader
-    function changeQuestionState(direction, callback) {
-      const card = document.getElementById('slide-card');
-      const exitClass = direction === 'next' ? 'slide-exit-next' : 'slide-exit-prev';
-      const enterClass = direction === 'next' ? 'slide-enter-next' : 'slide-enter-prev';
+    /**
+     * Replaces the question with the large answer and smaller walkthrough
+     */
+    function revealAnswer() {
+      if (!currentTopic || !currentTopic.questions[questionIndex]) return;
       
-      // Trigger card slide-out transition
-      card.classList.add(exitClass);
+      const qObj = currentTopic.questions[questionIndex];
+      showAnswer = true;
+      
+      const container = document.getElementById('question-box');
+      
+      // Construct wrappers
+      const wrapper = document.createElement('div');
+      wrapper.className = 'answer-display';
+      
+      const ansCore = document.createElement('div');
+      ansCore.innerHTML = qObj.answer_core;
+      applyDynamicFontSize(ansCore, qObj.answer_core, true);
+      wrapper.appendChild(ansCore);
+      
+      if (qObj.answer_walkthrough) {
+        const divider = document.createElement('div');
+        divider.className = 'answer-divider';
+        wrapper.appendChild(divider);
+        
+        const ansWk = document.createElement('div');
+        ansWk.innerHTML = qObj.answer_walkthrough;
+        applyWalkthroughFontSize(ansWk, qObj.answer_walkthrough);
+        wrapper.appendChild(ansWk);
+      }
+      
+      container.innerHTML = '';
+      container.appendChild(wrapper);
+      
+      // Change Button State to Next Problem
+      document.getElementById('btn-label').textContent = 'Next';
+      document.getElementById('btn-icon').innerHTML = arrowIcon;
+    }
+
+    /**
+     * Navigates to the PREVIOUS question
+     */
+    function prevQuestion() {
+      if (isTransitioning || !currentTopic || questionIndex === 0) return;
+      document.getElementById('prev-btn').blur();
+      
+      runSlideTransitionBackward(() => {
+        questionIndex--;
+        renderQuestion();
+      });
+    }
+
+    /**
+     * Skips the current question without showing the answer
+     */
+    function skipQuestion() {
+      if (isTransitioning) return;
+      document.getElementById('skip-btn').blur();
+      advanceQuestion();
+    }
+
+    /**
+     * Moves to the next question or completion screen
+     */
+    function advanceQuestion() {
+      const totalQuestions = currentTopic.questions.length;
+      
+      if (questionIndex === totalQuestions - 1) {
+        // End of topic: Show Completion screen
+        document.getElementById('completion-subtitle').textContent = currentTopic.title;
+        switchView('completion-view');
+      } else {
+        // Advance to next question with a forward slide transition
+        runSlideTransition(() => {
+          questionIndex++;
+          renderQuestion();
+        });
+      }
+    }
+
+    /**
+     * Runs the forward slide transition (slides left, new content slides in from right)
+     */
+    function runSlideTransition(callback) {
+      isTransitioning = true;
+      const container = document.getElementById('question-box');
+      
+      container.classList.add('slide-out');
       
       setTimeout(() => {
-        callback(); // State update
+        callback();
         
-        // Remove exit class and snap to initial enter coordinates
-        card.classList.remove(exitClass);
-        card.classList.add(enterClass);
+        container.classList.remove('slide-out');
+        container.classList.add('slide-in');
         
-        // Force reflow layout
-        card.offsetHeight;
+        // Force reflow
+        container.offsetHeight;
         
-        // Remove enter class to let the card transition to default centered coordinates
-        card.classList.remove(enterClass);
+        container.classList.remove('slide-in');
+        isTransitioning = false;
       }, 250);
     }
 
-    // Render Question Slide content
-    function renderCard() {
-      const card = document.getElementById('slide-card');
+    /**
+     * Runs the backward slide transition (slides right, new content slides in from left)
+     */
+    function runSlideTransitionBackward(callback) {
+      isTransitioning = true;
+      const container = document.getElementById('question-box');
       
-      if (isCelebrationState) {
-        confetti.start();
+      container.classList.add('slide-out-right');
+      
+      setTimeout(() => {
+        callback();
         
-        card.innerHTML = `
-          <div class="celebration-card">
-            <div class="trophy-icon">🏆</div>
-            <div class="celebration-text-wrapper">
-              <h1 class="celebration-title">Review Completed!</h1>
-              <p class="celebration-subtitle">Congratulations! You have completed all 11 weeks of the Term 1 & 2 Mathematics Review (110 questions total).</p>
-            </div>
-            <div class="celebration-buttons">
-              <button class="btn btn-primary" onclick="restartReview()">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
-                </svg>
-                <span>RESTART REVIEW</span>
-              </button>
-              <button class="btn btn-secondary" onclick="showDashboard()">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="19" y1="12" x2="5" y2="12"></line>
-                  <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
-                <span>BACK TO WEEKS</span>
-              </button>
-            </div>
-          </div>
-        `;
+        container.classList.remove('slide-out-right');
+        container.classList.add('slide-in-left');
         
-        // Hide standard header title and slide numbers, show completion style
-        document.getElementById('week-label').textContent = "CONGRATULATIONS";
-        document.getElementById('week-title').textContent = "ALL REVIEWS COMPLETED";
-        document.getElementById('slide-counter').textContent = "Term 1-2 Complete";
-        document.getElementById('progress-bar').style.width = "100%";
-        document.getElementById('prev-btn').disabled = false;
-        
-        // Toggle footer button text
-        document.getElementById('next-btn-text').textContent = "RESTART";
-        return;
-      }
-      
-      confetti.stop();
-      
-      const week = weeksData[currentWeekIndex];
-      const q = week.questions[currentQuestionIndex];
-      
-      const formattedQuestion = formatMath(q.questionText);
-      const formattedAnswer = formatMath(q.answerText);
-      const formattedProcess = formatMath(q.processText);
-      
-      // Determine if a step-by-step process/working exists
-      const hasProcess = q.processText.trim() !== "";
-      
-      card.innerHTML = `
-        <!-- Question Box -->
-        <div class="question-box">
-          <div id="question-text">${formattedQuestion}</div>
-        </div>
-        
-        <!-- Divider -->
-        <div class="card-divider"></div>
-        
-        <!-- Reveal Section -->
-        <div class="reveal-section">
-          <!-- Reveal Button -->
-          <button class="reveal-btn" id="reveal-btn" onclick="revealAnswer()" style="display: ${isAnswerRevealed ? 'none' : 'flex'}">
-            <span class="reveal-btn-glow"></span>
-            <span class="reveal-btn-text">REVEAL ANSWER</span>
-            <span class="reveal-btn-hint">Press SPACE or Click</span>
-          </button>
-          
-          <!-- Answer & Workings Section -->
-          <div class="answer-details ${isAnswerRevealed ? 'visible' : ''}" id="answer-details" style="display: ${isAnswerRevealed ? 'flex' : 'none'}">
-            <div class="answer-card">
-              <span class="card-label">ANSWER</span>
-              <div class="card-content answer-content" id="answer-text">${formattedAnswer}</div>
-            </div>
-            
-            <div class="process-card" id="process-card-container" style="display: ${hasProcess ? 'flex' : 'none'}">
-              <span class="card-label">WORKING PROCESS</span>
-              <div class="card-content process-content" id="process-text">${formattedProcess}</div>
-            </div>
-          </div>
-        </div>
-      `;
-      
-      // Update header details
-      document.getElementById('week-label').textContent = `WEEK ${week.weekNumber}`;
-      document.getElementById('week-title').textContent = week.weekTitle;
-      document.getElementById('slide-counter').textContent = `Question ${currentQuestionIndex + 1} of 10`;
-      
-      // Progress Bar width calculation
-      const progressPercent = ((currentQuestionIndex + 1) / 10) * 100;
-      document.getElementById('progress-bar').style.width = `${progressPercent}%`;
-      
-      // Prev Button disabled checks
-      document.getElementById('prev-btn').disabled = (currentWeekIndex === 0 && currentQuestionIndex === 0);
-      
-      // Next/Reveal Button display text
-      document.getElementById('next-btn-text').textContent = isAnswerRevealed ? "NEXT" : "REVEAL";
-      
-      // Render the bottom navigation dot indicators
-      renderDots();
-      
-      // Recalculate font sizing constraints
-      setTimeout(autoSizeCardText, 10);
-    }
-
-    // Nav Dot indicator renderer
-    function renderDots() {
-      const dotsContainer = document.getElementById('nav-dots');
-      dotsContainer.innerHTML = "";
-      
-      for (let i = 0; i < 10; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'dot';
-        
-        if (i === currentQuestionIndex && !isCelebrationState) {
-          dot.classList.add('active');
-        } else if (i < currentQuestionIndex || isCelebrationState) {
-          dot.classList.add('completed');
-        }
-        
-        dot.setAttribute('data-q', `Q${i + 1}`);
-        dot.onclick = () => {
-          if (isCelebrationState) {
-            isCelebrationState = false;
-          }
-          jumpToQuestion(i);
-        };
-        dotsContainer.appendChild(dot);
-      }
-    }
-
-    // Reveal Logic
-    function revealAnswer() {
-      if (isAnswerRevealed || isCelebrationState) return;
-      
-      isAnswerRevealed = true;
-      
-      const btn = document.getElementById('reveal-btn');
-      const details = document.getElementById('answer-details');
-      const nextBtnText = document.getElementById('next-btn-text');
-      
-      if (btn) btn.style.display = 'none';
-      if (details) {
-        details.style.display = 'flex';
         // Force reflow
-        details.offsetHeight;
-        details.classList.add('visible');
-      }
-      if (nextBtnText) nextBtnText.textContent = "NEXT";
-      
-      // Recalculate font sizes of newly revealed items
-      setTimeout(autoSizeCardText, 10);
+        container.offsetHeight;
+        
+        container.classList.remove('slide-in-left');
+        isTransitioning = false;
+      }, 250);
     }
 
-    // Next Action Control Flow (Presenter Clicker compatible)
-    function nextQuestion() {
-      // If we are on the celebration screen, next restart the entire deck
-      if (isCelebrationState) {
-        restartReview();
-        return;
-      }
-      
-      // Flow 1: If answer is hidden, reveal it first
-      if (!isAnswerRevealed) {
-        revealAnswer();
-        return;
-      }
-      
-      // Flow 2: If answer is already revealed, move forward
-      if (currentQuestionIndex < 9) {
-        // Move to next question within the same week
-        changeQuestionState('next', () => {
-          currentQuestionIndex++;
-          isAnswerRevealed = false;
-        });
-      } else {
-        // Reached Question 10 of current week. Move to next week or completion.
-        if (currentWeekIndex < 10) {
-          changeQuestionState('next', () => {
-            currentWeekIndex++;
-            currentQuestionIndex = 0;
-            isAnswerRevealed = false;
-            buildSidebar(); // Update sidebar active item
-          });
-        } else {
-          // Reached final Question of Week 11 -> Celebration State
-          changeQuestionState('next', () => {
-            isCelebrationState = true;
-            isAnswerRevealed = false;
-          });
-        }
-      }
+    /**
+     * RESTARTS current topic from question 1
+     */
+    function restartTopic() {
+      questionIndex = 0;
+      showAnswer = false;
+      renderQuestion();
+      switchView('flashcard-view');
     }
 
-    // Previous Action Control Flow
-    function prevQuestion() {
-      if (isCelebrationState) {
-        changeQuestionState('prev', () => {
-          isCelebrationState = false;
-          currentWeekIndex = 10;
-          currentQuestionIndex = 9;
-          isAnswerRevealed = true; // Show last question revealed
-          buildSidebar();
-        });
-        return;
-      }
-      
-      if (currentQuestionIndex > 0) {
-        changeQuestionState('prev', () => {
-          currentQuestionIndex--;
-          isAnswerRevealed = false;
-        });
-      } else {
-        // Reached Question 1. Go back to previous week Question 10.
-        if (currentWeekIndex > 0) {
-          changeQuestionState('prev', () => {
-            currentWeekIndex--;
-            currentQuestionIndex = 9;
-            isAnswerRevealed = false;
-            buildSidebar();
-          });
-        }
-      }
+    /**
+     * GOES back to the launch screen
+     */
+    function backToMain() {
+      currentTopic = null;
+      switchView('launch-view');
     }
 
-    // Week jump selectors
-    function jumpToWeek(weekIdx) {
-      isCelebrationState = false;
-      isDashboardState = false;
-      toggleSidebar(false);
-      
-      currentWeekIndex = weekIdx;
-      currentQuestionIndex = 0;
-      isAnswerRevealed = false;
-      
-      document.getElementById('dashboard-view').style.display = 'none';
-      document.getElementById('deck-view').style.display = 'flex';
-      
-      buildSidebar();
-      renderCard();
-    }
-
-    // Direct question dot jump selectors
-    function jumpToQuestion(qIdx) {
-      if (currentQuestionIndex === qIdx) return;
-      const dir = qIdx > currentQuestionIndex ? 'next' : 'prev';
-      
-      changeQuestionState(dir, () => {
-        currentQuestionIndex = qIdx;
-        isAnswerRevealed = false;
+    /**
+     * Switches view between launch-view, flashcard-view, and completion-view
+     */
+    function switchView(viewId) {
+      document.querySelectorAll('.view-container').forEach(view => {
+        view.classList.remove('active');
       });
+      document.getElementById(viewId).classList.add('active');
     }
 
-    function restartReview() {
-      isCelebrationState = false;
-      isDashboardState = false;
-      toggleSidebar(false);
+    /**
+     * Determines and updates the top right category badge
+     */
+    function updateOperationBadge(title) {
+      const badge = document.getElementById('op-badge');
+      badge.className = 'op-badge'; // Reset classes
       
-      currentWeekIndex = 0;
-      currentQuestionIndex = 0;
-      isAnswerRevealed = false;
+      const upperTitle = title.toUpperCase();
+      let category = 'Math Review';
+      let badgeClass = 'badge-arithmetic';
       
-      document.getElementById('dashboard-view').style.display = 'none';
-      document.getElementById('deck-view').style.display = 'flex';
+      if (upperTitle.includes("ALGEBRA")) {
+        category = 'Algebra';
+        badgeClass = 'badge-algebra';
+      } else if (upperTitle.includes("PROBABILITY")) {
+        category = 'Probability';
+        badgeClass = 'badge-probability';
+      } else if (upperTitle.includes("STATISTICS")) {
+        category = 'Statistics';
+        badgeClass = 'badge-statistics';
+      } else if (upperTitle.includes("GEOMETRY") || upperTitle.includes("VOLUME")) {
+        category = 'Geometry';
+        badgeClass = 'badge-geometry';
+      } else if (upperTitle.includes("FRACTION") || upperTitle.includes("PERCENTAGE") || upperTitle.includes("DECIMAL") || upperTitle.includes("OPERATIONS")) {
+        category = 'Arithmetic';
+        badgeClass = 'badge-arithmetic';
+      }
       
-      buildSidebar();
-      renderCard();
+      badge.textContent = category;
+      badge.classList.add(badgeClass);
     }
 
-    // Keyboard Shortcuts Listener
-    window.addEventListener('keydown', (e) => {
-      // If we are on the dashboard, number keys can jump to weeks 1-9
-      if (isDashboardState) {
-        if (e.key >= '1' && e.key <= '9') {
-          const idx = parseInt(e.key) - 1;
-          if (idx < weeksData.length) jumpToWeek(idx);
-        }
-        return;
-      }
-
-      // Disable shortcuts when sidebar is open to prevent jumping behind drawer
-      const sidebar = document.getElementById('sidebar');
-      if (sidebar.classList.contains('open')) {
-        if (e.key === 'Escape') toggleSidebar(false);
-        return;
-      }
-      
-      switch (e.key) {
-        case ' ':
-          e.preventDefault(); // Prevents page scrolling
-          nextQuestion();
-          break;
-        case 'ArrowRight':
-          nextQuestion();
-          break;
-        case 'ArrowLeft':
+    // Keyboard controls support
+    document.addEventListener('keydown', (event) => {
+      const activeView = document.querySelector('.view-container.active');
+      if (activeView && activeView.id === 'flashcard-view') {
+        if (event.code === 'Space' || event.code === 'Enter') {
+          event.preventDefault();
+          handleAction();
+        } else if (event.code === 'ArrowLeft') {
+          event.preventDefault();
           prevQuestion();
-          break;
-        case 'Enter':
-          nextQuestion();
-          break;
-        case 'm':
-        case 'M':
-          toggleSidebar(true);
-          break;
-        case 'Escape':
-          showDashboard();
-          break;
+        } else if (event.code === 'ArrowRight') {
+          event.preventDefault();
+          handleAction();
+        }
+      } else if (activeView && activeView.id === 'completion-view') {
+        if (event.code === 'Space' || event.code === 'Enter') {
+          event.preventDefault();
+          restartTopic();
+        }
       }
-    });
-
-    // Screen resizing listener to re-fit sizes
-    window.addEventListener('resize', autoSizeCardText);
-
-    // Initializer
-    window.addEventListener('DOMContentLoaded', () => {
-      const canvas = document.getElementById('confetti-canvas');
-      confetti = new ConfettiEngine(canvas);
-      
-      buildDashboard();
-      buildSidebar();
-      showDashboard();
     });
   </script>
 </body>
